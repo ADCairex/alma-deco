@@ -6,8 +6,8 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  BACKEND_IMAGE: ghcr.io/${{ github.repository_owner_lower }}/alma-deco-backend
-  FRONTEND_IMAGE: ghcr.io/${{ github.repository_owner_lower }}/alma-deco-frontend
+  BACKEND_IMAGE: ghcr.io/adcairex/alma-deco-backend
+  FRONTEND_IMAGE: ghcr.io/adcairex/alma-deco-frontend
 
 jobs:
   build-backend:
@@ -62,30 +62,3 @@ jobs:
             VITE_PAYPAL_CLIENT_ID=${{ secrets.VITE_PAYPAL_CLIENT_ID }}
             VITE_ADMIN_TOKEN=${{ secrets.VITE_ADMIN_TOKEN }}
             VITE_ADMIN_PASSWORD=${{ secrets.VITE_ADMIN_PASSWORD }}
-
-  deploy:
-    name: Deploy to server
-    needs: [build-backend, build-frontend]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1
-        with:
-          host: ${{ secrets.DEPLOY_HOST }}
-          username: ${{ secrets.DEPLOY_USER }}
-          key: ${{ secrets.DEPLOY_SSH_KEY }}
-          script: |
-            cd /opt/alma-deco
-
-            # Login to GHCR to pull private images
-            echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-
-            # Pull new images
-            docker pull ${{ env.BACKEND_IMAGE }}:latest
-            docker pull ${{ env.FRONTEND_IMAGE }}:latest
-
-            # Recreate only changed containers, keep DB volume intact
-            docker compose -f docker-compose.prod.yml up -d --no-deps backend frontend
-
-            # Remove dangling images
-            docker image prune -f
