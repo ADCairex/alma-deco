@@ -1,5 +1,5 @@
 services:
-  db:
+  alma-deco-db:
     image: postgres:16-alpine
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
@@ -14,21 +14,22 @@ services:
     restart: unless-stopped
 
   backend:
-    image: ghcr.io/${GITHUB_REPOSITORY_OWNER}/alma-deco-backend:latest
+    image: ghcr.io/adcairex/alma-deco-backend:latest
     env_file: ./backend/.env.prod
     volumes:
       - uploads:/app/uploads
     depends_on:
-      db:
+      alma-deco-db:
         condition: service_healthy
     restart: unless-stopped
 
   frontend:
-    image: ghcr.io/${GITHUB_REPOSITORY_OWNER}/alma-deco-frontend:latest
+    image: ghcr.io/adcairex/alma-deco-frontend:latest
     ports:
       - "80:80"
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     restart: unless-stopped
 
 volumes:
