@@ -1,0 +1,102 @@
+[
+  {
+    "id": "prod-001",
+    "name": "Jarrón Cerámico Atenas",
+    "price": 45.99,
+    "currency": "EUR",
+    "image_url": "https://images.unsplash.com/photo-1612196808214-b8e1d6145a8c?w=400&h=400&fit=crop",
+    "description": "Jarrón artesanal de cerámica con acabado mate en tonos tierra. Perfecto para flores secas o como pieza decorativa.",
+    "category": "Jarrones",
+    "stock": 15
+  },
+  {
+    "id": "prod-002",
+    "name": "Lámpara de Mesa Nórdica",
+    "price": 79.50,
+    "currency": "EUR",
+    "image_url": "https://images.unsplash.com/photo-1507473885765-e6ed057ab6fe?w=400&h=400&fit=crop",
+    "description": "Lámpara de mesa con base de madera natural y pantalla de lino. Luz cálida para crear ambientes acogedores.",
+    "category": "Iluminación",
+    "stock": 8
+  },
+  {
+    "id": "prod-003",
+    "name": "Cuadro Abstracto Océano",
+    "price": 120.00,
+    "currency": "EUR",
+    "image_url": "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=400&h=400&fit=crop",
+    "description": "Lienzo pintado a mano con técnica mixta en tonos azules y dorados. 60x80 cm con marco de madera.",
+    "category": "Arte",
+    "stock": 5
+  },
+  {
+    "id": "prod-004",
+    "name": "Set de 2 Cojines Boho",
+    "price": 34.90,
+    "currency": "EUR",
+    "image_url": "https://images.unsplash.com/photo-1584100936595-c0654b55a2e2?w=400&h=400&fit=crop",
+    "description": "Cojines decorativos de algodón con flecos y patrones geométricos. Incluye relleno. 45x45 cm.",
+    "category": "Textiles",
+    "stock": 20
+  },
+  {
+    "id": "prod-005",
+    "name": "Vela Aromática Sándalo y Vainilla",
+    "price": 18.50,
+    "currency": "EUR",
+    "image_url": "https://images.unsplash.com/photo-1602607616974-0514061dab4c?w=400&h=400&fit=crop",
+    "description": "Vela de cera de soja con aroma de sándalo y vainilla. Duración aproximada de 45 horas. Recipiente de vidrio reutilizable.",
+    "category": "Velas",
+    "stock": 30
+  },
+  {
+    "id": "prod-006",
+    "name": "Maceta Colgante Terracota",
+    "price": 22.00,
+    "currency": "EUR",
+    "image_url": "https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=400&h=400&fit=crop",
+    "description": "Maceta de terracota con soporte de macramé hecho a mano. Ideal para plantas colgantes de interior.",
+    "category": "Jarrones",
+    "stock": 12
+  },
+  {
+    "id": "prod-007",
+    "name": "Espejo Redondo Dorado",
+    "price": 89.99,
+    "currency": "EUR",
+    "image_url": "https://images.unsplash.com/photo-1618220179428-22790b461013?w=400&h=400&fit=crop",
+    "description": "Espejo decorativo con marco metálico dorado. Diámetro 60 cm. Ideal para recibidores y salones.",
+    "category": "Espejos",
+    "stock": 7
+  },
+  {
+    "id": "prod-008",
+    "name": "Reloj de Pared Minimalista",
+    "price": 42.00,
+    "currency": "EUR",
+    "image_url": "https://images.unsplash.com/photo-1563861826100-9cb868fdbe1c?w=400&h=400&fit=crop",
+    "description": "Reloj de pared con diseño minimalista en negro mate. Movimiento silencioso. Diámetro 30 cm.",
+    "category": "Relojes",
+    "stock": 10
+  },
+  {
+    "id": "prod-009",
+    "name": "Alfombra Kilim Vintage",
+    "price": 155.00,
+    "currency": "EUR",
+    "image_url": "https://images.unsplash.com/photo-1600166898405-da9535204843?w=400&h=400&fit=crop",
+    "description": "Alfombra estilo kilim con patrones étnicos en tonos cálidos. 120x180 cm. Algodón 100% lavable.",
+    "category": "Textiles",
+    "stock": 4
+  },
+  {
+    "id": "prod-010",
+    "name": "Portavelas Cristal Ahumado",
+    "price": 15.90,
+    "currency": "EUR",
+    "image_url": "https://images.unsplash.com/photo-1603006905003-be475563bc59?w=400&h=400&fit=crop",
+    "description": "Set de 3 portavelas de cristal ahumado en diferentes alturas. Crean un ambiente íntimo y elegante.",
+    "category": "Velas",
+    "stock": 25
+  }
+]
