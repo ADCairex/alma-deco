@@ -6,8 +6,8 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  BACKEND_IMAGE: ghcr.io/${{ github.repository_owner }}/alma-deco-backend
-  FRONTEND_IMAGE: ghcr.io/${{ github.repository_owner }}/alma-deco-frontend
+  BACKEND_IMAGE: ghcr.io/${{ github.repository_owner_lower }}/alma-deco-backend
+  FRONTEND_IMAGE: ghcr.io/${{ github.repository_owner_lower }}/alma-deco-frontend
 
 jobs:
   build-backend:
@@ -76,6 +76,9 @@ jobs:
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           script: |
             cd /opt/alma-deco
+
+            # Login to GHCR to pull private images
+            echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
             # Pull new images
             docker pull ${{ env.BACKEND_IMAGE }}:latest
