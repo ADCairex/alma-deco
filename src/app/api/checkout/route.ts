@@ -76,7 +76,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       orderId: order.id,
-      redirectUrl: `/success?order=${order.id}`,
     });
   } catch (error) {
     if (error instanceof CheckoutValidationError) {

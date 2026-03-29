@@ -3,8 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { FormEvent } from "react";
-import { useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 
 import { formatProductPrice } from "@/lib/shop-products";
 import { useCart } from "@/store/CartContext";
@@ -29,9 +28,18 @@ type CartValidationResponse = {
 
 type CheckoutResponse = {
   orderId?: string;
-  redirectUrl?: string;
   error?: string;
   errors?: CartValidationError[];
+};
+
+type StripePaymentResponse = {
+  url?: string;
+  error?: string;
+};
+
+type PayPalPaymentResponse = {
+  approvalUrl?: string;
+  error?: string;
 };
 
 const COUNTRY_OPTIONS = ["España", "Portugal", "Francia", "Italia", "Alemania"];
@@ -82,13 +90,22 @@ function PaymentCard({
 }
 
 export function CheckoutPageClient() {
-  const router = useRouter();
-  const { items, total, clearCart, isHydrated } = useCart();
+  const { items, total, isHydrated } = useCart();
   const [formValues, setFormValues] = useState<FormValues>(initialFormValues);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<CheckoutPaymentMethod | null>(null);
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    if (new URLSearchParams(window.location.search).get("cancelled")) {
+      setSubmitError("Cancelaste el pago. Podés revisar tu pedido e intentarlo otra vez.");
+    }
+  }, []);
 
   const isFormValid = useMemo(() => {
     const emailIsValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formValues.email);
@@ -179,13 +196,52 @@ export function CheckoutPageClient() {
 
       const checkoutData = (await checkoutResponse.json()) as CheckoutResponse;
 
-      if (!checkoutResponse.ok || !checkoutData.redirectUrl) {
+      if (!checkoutResponse.ok || !checkoutData.orderId) {
         setSubmitError(checkoutData.error ?? checkoutData.errors?.[0]?.message ?? "No se pudo crear el pedido.");
         return;
       }
 
-      clearCart();
-      router.push(checkoutData.redirectUrl);
+      if (selectedPaymentMethod === "stripe") {
+        const stripeResponse = await fetch("/api/payments/stripe", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            orderId: checkoutData.orderId,
+          }),
+        });
+
+        const stripeData = (await stripeResponse.json()) as StripePaymentResponse;
+
+        if (!stripeResponse.ok || !stripeData.url) {
+          setSubmitError(stripeData.error ?? "No pudimos redirigirte a Stripe.");
+          return;
+        }
+
+        window.location.assign(stripeData.url);
+        return;
+      }
+
+      const paypalResponse = await fetch("/api/payments/paypal", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          action: "create",
+          orderId: checkoutData.orderId,
+        }),
+      });
+
+      const paypalData = (await paypalResponse.json()) as PayPalPaymentResponse;
+
+      if (!paypalResponse.ok || !paypalData.approvalUrl) {
+        setSubmitError(paypalData.error ?? "No pudimos redirigirte a PayPal.");
+        return;
+      }
+
+      window.location.assign(paypalData.approvalUrl);
     } catch {
       setSubmitError("Ocurrió un error inesperado al procesar tu pedido.");
     } finally {
@@ -373,7 +429,7 @@ export function CheckoutPageClient() {
               <p className="text-[0.72rem] uppercase tracking-[0.2em] text-ink/50">Método de pago</p>
               <PaymentCard
                 title="Pagar con tarjeta"
-                subtitle="Preparado para integrar Stripe en F7."
+                subtitle="Serás redirigido a Stripe Checkout para completar el pago de forma segura."
                 badge="Stripe"
                 selected={selectedPaymentMethod === "stripe"}
                 onClick={() => {
@@ -387,7 +443,7 @@ export function CheckoutPageClient() {
               />
               <PaymentCard
                 title="Pagar con PayPal"
-                subtitle="Preparado para integrar PayPal en F8."
+                subtitle="Te llevamos a PayPal para aprobar el pago y volvés automáticamente a la tienda."
                 badge="PayPal"
                 selected={selectedPaymentMethod === "paypal"}
                 onClick={() => {
@@ -405,7 +461,7 @@ export function CheckoutPageClient() {
             {submitError || errors.cart ? <p className="mt-5 text-sm text-red-600">{submitError ?? errors.cart}</p> : null}
 
             <button type="submit" disabled={!isFormValid || isSubmitting} className="pill-dark mt-8 flex w-full disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:scale-100">
-              {isSubmitting ? "Procesando pedido…" : "Confirmar pedido"}
+              {isSubmitting ? "Redirigiendo al pago…" : "Confirmar pedido"}
             </button>
           </aside>
         </form>
