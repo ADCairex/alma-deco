@@ -21,6 +21,19 @@ export interface CartItem {
   imageUrl?: string | null;
 }
 
+export type CheckoutPaymentMethod = "stripe" | "paypal";
+
+export interface CartValidationError {
+  productId: string;
+  code: "empty_cart" | "product_removed" | "out_of_stock" | "insufficient_stock";
+  message: string;
+}
+
+export interface ValidatedCartItem extends CartItem {
+  currency: string;
+  stockAvailable: number;
+}
+
 export interface Order {
   id: string;
   customerName: string;

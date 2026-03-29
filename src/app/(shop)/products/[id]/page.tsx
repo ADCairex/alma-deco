@@ -95,7 +95,13 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                 <p className={`mt-3 text-sm font-medium uppercase tracking-[0.16em] ${stockStatus.tone}`}>{stockStatus.label}</p>
               </div>
 
-              <ProductPurchasePanel stock={product.stock} />
+              <ProductPurchasePanel
+                productId={product.id}
+                name={product.name}
+                price={product.price}
+                imageUrl={galleryImages[0] ?? product.imageUrl}
+                stock={product.stock}
+              />
             </div>
           </div>
         </div>

@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { formatProductPrice } from "@/lib/shop-products";
+import { useCart } from "@/store/CartContext";
 
 type ProductCardProps = {
   id: string;
@@ -15,6 +16,8 @@ type ProductCardProps = {
 };
 
 export function ProductCard({ id, name, price, imageUrl, category, currency = "EUR" }: ProductCardProps) {
+  const { addItem } = useCart();
+
   return (
     <article className="group">
       <Link href={`/products/${id}`} className="block">
@@ -41,6 +44,12 @@ export function ProductCard({ id, name, price, imageUrl, category, currency = "E
               onClick={(event) => {
                 event.preventDefault();
                 event.stopPropagation();
+                addItem({
+                  productId: id,
+                  name,
+                  price,
+                  imageUrl,
+                });
               }}
               className="cart-overlay-button absolute inset-x-5 bottom-5 z-10 justify-center text-center"
             >

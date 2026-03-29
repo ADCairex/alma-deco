@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { DeerLogo } from "@/components/icons/DeerLogo";
+import { useCart } from "@/store/CartContext";
 
 const navLinks = [
   { href: "/products?tag=rebajas", label: "REBAJAS" },
@@ -44,7 +45,7 @@ function MenuIcon({ open }: { open: boolean }) {
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const cartCount = 0;
+  const { itemCount } = useCart();
 
   return (
     <header className="sticky top-0 z-50 bg-bg-dark text-white">
@@ -121,9 +122,11 @@ export function Navbar() {
 
             <Link href="/cart" aria-label="Carrito" className="relative flex h-10 w-10 items-center justify-center rounded-full text-white hover:bg-white/8">
               <BagIcon />
-              <span className="absolute -right-0.5 -top-0.5 flex h-[18px] w-[18px] items-center justify-center rounded-full bg-white text-[0.58rem] font-semibold text-ink">
-                {cartCount}
-              </span>
+              {itemCount > 0 ? (
+                <span className="absolute -right-0.5 -top-0.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-white px-1 text-[0.58rem] font-semibold text-ink">
+                  {itemCount}
+                </span>
+              ) : null}
             </Link>
           </div>
         </div>
