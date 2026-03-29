@@ -46,6 +46,9 @@ prisma/dev.db-journal
 /frontend
 /db
 
+# design assets (local only)
+/ALMA-DECO
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
