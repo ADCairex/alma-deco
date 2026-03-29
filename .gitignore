@@ -1,29 +1,53 @@
-# Dependencies
-node_modules/
-__pycache__/
-*.pyc
-*.pyo
-venv/
-.venv/
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# Environment
-.env
-.env.local
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
 
-# Build
-dist/
-build/
+# testing
+/coverage
 
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
+# next.js
+/.next/
+/out/
 
-# OS
+# production
+/build
+
+# misc
 .DS_Store
-Thumbs.db
+*.pem
 
-# Logs
-*.log
-ALMA DECO
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+.env*
+
+# prisma sqlite
+prisma/dev.db
+prisma/dev.db-journal
+
+# vercel
+.vercel
+
+# old project leftovers
+/new-frontend
+/backend
+/frontend
+/db
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+/src/generated/prisma
