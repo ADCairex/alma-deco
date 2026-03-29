@@ -3,41 +3,37 @@ import Image from "next/image";
 import { DeerLogo } from "@/components/icons/DeerLogo";
 import { Hero } from "@/components/shop/Hero";
 import { ProductCard } from "@/components/shop/ProductCard";
+import { prisma } from "@/lib/prisma";
+import { formatPublicProduct } from "@/lib/shop-products";
+import type { Product } from "@/types";
 
-const topVentas = [
-  {
-    name: "Ramo Pampas",
-    price: "39.00€",
-    image: "https://images.unsplash.com/photo-1517705008128-361805f42e86?w=800&q=80&auto=format&fit=crop",
-  },
-  {
-    name: "Velas Arena",
-    price: "46.00€",
-    image: "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=800&q=80&auto=format&fit=crop",
-  },
-  {
-    name: "Jarrón Otoño",
-    price: "62.00€",
-    image: "https://images.unsplash.com/photo-1511920170033-f8396924c348?w=800&q=80&auto=format&fit=crop",
-  },
-  {
-    name: "Cesta Trenzada",
-    price: "54.00€",
-    image: "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=800&q=80&auto=format&fit=crop",
-  },
-  {
-    name: "Cerámica Calma",
-    price: "58.00€",
-    image: "https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?w=800&q=80&auto=format&fit=crop",
-  },
-  {
-    name: "Reloj Roble",
-    price: "89.00€",
-    image: "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=800&q=80&auto=format&fit=crop",
-  },
-];
+export default async function HomePage() {
+  const featuredProducts = await prisma.product.findMany({
+    where: {
+      featured: true,
+      stock: {
+        gt: 0,
+      },
+    },
+    orderBy: [{ createdAt: "desc" }],
+    take: 6,
+  });
 
-export default function HomePage() {
+  const fallbackProducts =
+    featuredProducts.length === 0
+      ? await prisma.product.findMany({
+          where: {
+            stock: {
+              gt: 0,
+            },
+          },
+          orderBy: [{ createdAt: "desc" }],
+          take: 6,
+        })
+      : [];
+
+  const topVentas: Product[] = (featuredProducts.length > 0 ? featuredProducts : fallbackProducts).map(formatPublicProduct);
+
   return (
     <>
       <Hero />
@@ -49,11 +45,18 @@ export default function HomePage() {
             <span className="h-px w-28 bg-ink/70" />
           </div>
 
-          <div className="grid gap-x-8 gap-y-14 md:grid-cols-2 xl:grid-cols-3">
-            {topVentas.map((product) => (
-              <ProductCard key={product.name} {...product} />
-            ))}
-          </div>
+          {topVentas.length > 0 ? (
+            <div className="grid gap-x-8 gap-y-14 md:grid-cols-2 xl:grid-cols-3">
+              {topVentas.map((product) => (
+                <ProductCard key={product.id} {...product} />
+              ))}
+            </div>
+          ) : (
+            <div className="rounded-[2rem] border border-line bg-stone-50 px-8 py-14 text-center">
+              <p className="editorial-label text-ink/46">Top Ventas</p>
+              <p className="mt-4 text-lg text-ink/72">Todavía no hay productos destacados cargados para mostrar.</p>
+            </div>
+          )}
         </div>
       </section>
 

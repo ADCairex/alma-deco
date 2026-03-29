@@ -2,8 +2,8 @@ import Link from "next/link";
 
 const links = [
   { href: "/admin", label: "Dashboard" },
-  { href: "/admin/products", label: "Products" },
-  { href: "/admin/orders", label: "Orders" },
+  { href: "/admin/products", label: "Productos" },
+  { href: "/admin/orders", label: "Pedidos" },
 ];
 
 export function AdminSidebar() {
