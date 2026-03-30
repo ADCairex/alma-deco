@@ -11,6 +11,7 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV DATABASE_URL="file:./placeholder.db"
 RUN npx prisma generate
+RUN npx prisma db push --skip-generate
 RUN npm run build
 RUN npm prune --omit=dev
 
