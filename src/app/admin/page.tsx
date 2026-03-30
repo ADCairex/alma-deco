@@ -1,3 +1,8 @@
-export default function AdminDashboardPage() {
-  return <h1 className="text-4xl font-semibold text-zinc-950">Dashboard</h1>;
+import { DashboardMetrics } from "@/components/admin/DashboardMetrics";
+import { fetchAdminDashboardMetrics } from "@/lib/admin-data";
+
+export default async function AdminDashboardPage() {
+  const metrics = await fetchAdminDashboardMetrics();
+
+  return <DashboardMetrics metrics={metrics} />;
 }
