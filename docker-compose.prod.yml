@@ -1,0 +1,23 @@
+services:
+  alma-deco:
+    image: ghcr.io/adcairex/alma-deco:latest
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=file:/app/data/prod.db
+    env_file:
+      - .env.production
+    volumes:
+      - alma-data:/app/data
+      - alma-uploads:/app/public/uploads
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  alma-data:
+  alma-uploads:
