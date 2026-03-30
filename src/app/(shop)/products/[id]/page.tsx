@@ -5,8 +5,11 @@ import { ImageGallery } from "@/components/shop/ImageGallery";
 import { ProductCard } from "@/components/shop/ProductCard";
 import { ProductPurchasePanel } from "@/components/shop/ProductPurchasePanel";
 import { prisma } from "@/lib/prisma";
+import { getProductStructuredData } from "@/lib/structured-data";
 import { formatProductPrice, formatPublicProduct, getProductGalleryImages, getProductSeoDescription, getStockStatus } from "@/lib/shop-products";
 import type { Product } from "@/types";
+
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://almadeco.com";
 
 type ProductDetailPageProps = {
   params: Promise<{
@@ -28,14 +31,32 @@ export async function generateMetadata({ params }: ProductDetailPageProps): Prom
 
   if (!product) {
     return {
-      title: "Producto | Alma Deco",
+      title: "Producto",
       description: "Descubrí la colección editorial de Alma Deco.",
     };
   }
 
+  const canonicalPath = `/products/${product.id}`;
+
   return {
-    title: `${product.name} | Alma Deco`,
+    title: product.name,
     description: getProductSeoDescription(product),
+    alternates: {
+      canonical: canonicalPath,
+    },
+    openGraph: {
+      title: product.name,
+      description: getProductSeoDescription(product),
+      url: canonicalPath,
+      images: product.imageUrl
+        ? [
+            {
+              url: product.imageUrl,
+              alt: product.name,
+            },
+          ]
+        : undefined,
+    },
   };
 }
 
@@ -64,9 +85,17 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
   const galleryImages = getProductGalleryImages(product);
   const stockStatus = getStockStatus(product.stock);
   const relatedProductsNormalized: Product[] = relatedProducts.map(formatPublicProduct);
+  const productStructuredData = getProductStructuredData({
+    product,
+    siteUrl,
+    path: `/products/${product.id}`,
+    imageUrl: galleryImages[0] ?? product.imageUrl,
+  });
 
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productStructuredData) }} />
+
       <section className="section-space bg-paper">
         <div className="site-container grid gap-10 lg:grid-cols-[minmax(0,1.2fr)_minmax(360px,0.8fr)] lg:gap-16 xl:gap-20">
           <div>

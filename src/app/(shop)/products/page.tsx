@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 
 import { ProductCard } from "@/components/shop/ProductCard";
@@ -16,6 +17,21 @@ type ProductsPageProps = {
     search?: string | string[];
     sort?: string | string[];
   }>;
+};
+
+export const metadata: Metadata = {
+  title: "Colección",
+  description:
+    "Explorá la colección de Alma Deco y descubrí piezas de decoración rústica artesanal con materiales nobles, calidez mediterránea y carácter editorial.",
+  alternates: {
+    canonical: "/products",
+  },
+  openGraph: {
+    title: "Colección",
+    description:
+      "Explorá la colección de Alma Deco y descubrí piezas de decoración rústica artesanal con materiales nobles, calidez mediterránea y carácter editorial.",
+    url: "/products",
+  },
 };
 
 const sortLabels = {

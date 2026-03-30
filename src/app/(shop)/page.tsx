@@ -1,11 +1,35 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 
 import { DeerLogo } from "@/components/icons/DeerLogo";
 import { Hero } from "@/components/shop/Hero";
 import { ProductCard } from "@/components/shop/ProductCard";
 import { prisma } from "@/lib/prisma";
+import { getOrganizationStructuredData, getWebsiteStructuredData } from "@/lib/structured-data";
 import { formatPublicProduct } from "@/lib/shop-products";
 import type { Product } from "@/types";
+
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://almadeco.com";
+
+export const metadata: Metadata = {
+  title: {
+    absolute: "Alma Deco | Decoración Rústica Artesanal España",
+  },
+  description:
+    "Tienda online de decoración rústica artesanal. Piezas únicas para crear espacios con alma. Envíos a toda España.",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: "Alma Deco | Decoración Rústica Artesanal España",
+    description: "Tienda online de decoración rústica artesanal. Piezas únicas para crear espacios con alma.",
+    url: "/",
+  },
+  twitter: {
+    title: "Alma Deco | Decoración Rústica Artesanal España",
+    description: "Piezas únicas de decoración rústica artesanal. Envíos a toda España.",
+  },
+};
 
 export default async function HomePage() {
   const featuredProducts = await prisma.product.findMany({
@@ -33,9 +57,15 @@ export default async function HomePage() {
       : [];
 
   const topVentas: Product[] = (featuredProducts.length > 0 ? featuredProducts : fallbackProducts).map(formatPublicProduct);
+  const structuredData = [
+    getOrganizationStructuredData({ siteUrl }),
+    getWebsiteStructuredData({ siteUrl }),
+  ];
 
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
+
       <Hero />
 
       <section className="section-space bg-paper">

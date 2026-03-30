@@ -1,5 +1,16 @@
+import type { Metadata } from "next";
+
 import { SuccessPageClient } from "@/components/shop/SuccessPageClient";
 import { prisma } from "@/lib/prisma";
+
+export const metadata: Metadata = {
+  title: "Pedido Confirmado",
+  description: "Tu pedido en Alma Deco fue confirmado correctamente.",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 type SuccessPageProps = {
   searchParams: Promise<{

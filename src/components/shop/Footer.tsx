@@ -40,13 +40,13 @@ export function Footer() {
         </div>
 
         <div className="space-y-4 text-[0.82rem] text-white/82">
-          <Link href="#" className="block hover:opacity-70">
+          <Link href="/legal/terminos" className="block hover:opacity-70">
             Términos y Condiciones
           </Link>
-          <Link href="#" className="block hover:opacity-70">
+          <Link href="/legal/privacidad" className="block hover:opacity-70">
             Política de Privacidad
           </Link>
-          <Link href="#" className="block hover:opacity-70">
+          <Link href="/legal/cookies" className="block hover:opacity-70">
             Política de Cookies
           </Link>
           <Link href="#" className="block hover:opacity-70">

@@ -3,6 +3,8 @@ import { Inter, Playfair_Display } from "next/font/google";
 
 import "./globals.css";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://almadeco.com";
+
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
@@ -18,8 +20,45 @@ const playfairDisplay = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Alma Deco",
-  description: "Alma Deco — decoración editorial con estética rústica y minimalista.",
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: "Alma Deco | Decoración Rústica Artesanal España",
+    template: "%s | Alma Deco",
+  },
+  description:
+    "Tienda online de decoración rústica artesanal. Piezas únicas para crear espacios con alma. Envíos a toda España.",
+  keywords: [
+    "decoración rústica",
+    "decoración artesanal",
+    "decoración España",
+    "decoración hogar",
+    "alma deco",
+    "decoración natural",
+    "muebles rústicos",
+    "jarrones artesanales",
+    "velas artesanales",
+  ],
+  authors: [{ name: "Alma Deco" }],
+  creator: "Alma Deco",
+  openGraph: {
+    type: "website",
+    locale: "es_ES",
+    siteName: "Alma Deco",
+    title: "Alma Deco | Decoración Rústica Artesanal España",
+    description: "Tienda online de decoración rústica artesanal. Piezas únicas para crear espacios con alma.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Alma Deco | Decoración Rústica Artesanal",
+    description: "Piezas únicas de decoración rústica artesanal. Envíos a toda España.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  alternates: {
+    canonical: "/",
+  },
 };
 
 export default function RootLayout({
