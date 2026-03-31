@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 
 import { ImageGallery } from "@/components/shop/ImageGallery";
 import { ProductCard } from "@/components/shop/ProductCard";
@@ -28,11 +29,12 @@ async function getNormalizedProduct(id: string) {
 export async function generateMetadata({ params }: ProductDetailPageProps): Promise<Metadata> {
   const { id } = await params;
   const product = await getNormalizedProduct(id);
+  const t = await getTranslations("shop.product");
 
   if (!product) {
     return {
-      title: "Producto",
-      description: "Descubrí la colección editorial de Alma Deco.",
+      title: t("metaProductTitle"),
+      description: t("metaDescriptionFallback"),
     };
   }
 
@@ -61,6 +63,7 @@ export async function generateMetadata({ params }: ProductDetailPageProps): Prom
 }
 
 export default async function ProductDetailPage({ params }: ProductDetailPageProps) {
+  const t = await getTranslations("shop.product");
   const { id } = await params;
   const product = await getNormalizedProduct(id);
 
@@ -113,14 +116,14 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
               </div>
 
               <div className="space-y-5">
-                <p className="text-sm uppercase tracking-[0.22em] text-ink/50">Descripción</p>
+                <p className="text-sm uppercase tracking-[0.22em] text-ink/50">{t("descriptionLabel")}</p>
                 <p className="max-w-xl text-[0.98rem] leading-8 text-ink/72">
-                  {product.description?.trim() || "Una pieza seleccionada para sumar textura, calidez y una presencia serena a tu casa."}
+                  {product.description?.trim() || t("descriptionFallback")}
                 </p>
               </div>
 
               <div className="rounded-[1.75rem] border border-line bg-stone-50 px-6 py-5">
-                <p className="text-[0.72rem] uppercase tracking-[0.24em] text-ink/45">Disponibilidad</p>
+                <p className="text-[0.72rem] uppercase tracking-[0.24em] text-ink/45">{t("availabilityLabel")}</p>
                 <p className={`mt-3 text-sm font-medium uppercase tracking-[0.16em] ${stockStatus.tone}`}>{stockStatus.label}</p>
               </div>
 
@@ -140,8 +143,8 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
         <section className="section-space border-t border-line bg-stone-50/65">
           <div className="site-container">
             <div className="mb-12 flex flex-col items-center gap-4 text-center sm:mb-14">
-              <p className="editorial-label text-ink/48">Selección Alma Deco</p>
-              <h2 className="section-title">También te puede interesar</h2>
+              <p className="editorial-label text-ink/48">{t("relatedBreadcrumb")}</p>
+              <h2 className="section-title">{t("relatedTitle")}</h2>
               <span className="h-px w-28 bg-ink/70" />
             </div>
 

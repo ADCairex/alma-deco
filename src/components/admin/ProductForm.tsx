@@ -3,6 +3,8 @@
 import type { FormEvent } from "react";
 import { useEffect, useMemo, useState } from "react";
 
+import { useTranslations } from "next-intl";
+
 import {
   DEFAULT_PRODUCT_FORM_VALUES,
   PRODUCT_CATEGORIES,
@@ -43,6 +45,7 @@ export function ProductForm({ open, product, onClose, onSuccess }: ProductFormPr
   const [errors, setErrors] = useState<FormErrors>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const t = useTranslations("admin.products.form");
 
   useEffect(() => {
     if (!open) {
@@ -54,7 +57,7 @@ export function ProductForm({ open, product, onClose, onSuccess }: ProductFormPr
     setFormError(null);
   }, [open, product]);
 
-  const modeLabel = useMemo(() => (product ? "Editar producto" : "Nuevo producto"), [product]);
+  const modeLabel = useMemo(() => (product ? t("titleEdit") : t("titleCreate")), [product, t]);
 
   if (!open) {
     return null;
@@ -69,21 +72,21 @@ export function ProductForm({ open, product, onClose, onSuccess }: ProductFormPr
     const nextErrors: FormErrors = {};
 
     if (!values.name.trim()) {
-      nextErrors.name = "Ingresá el nombre del producto.";
+      nextErrors.name = t("errorNameRequired");
     }
 
     if (!values.price.trim()) {
-      nextErrors.price = "Ingresá el precio en euros.";
+      nextErrors.price = t("errorPriceRequired");
     } else if (Number(values.price) < 0 || Number.isNaN(Number(values.price))) {
-      nextErrors.price = "Ingresá un precio válido mayor o igual a 0.";
+      nextErrors.price = t("errorPriceInvalid");
     }
 
     if (!values.category.trim()) {
-      nextErrors.category = "Seleccioná una categoría.";
+      nextErrors.category = t("errorCategoryRequired");
     }
 
     if (values.stock.trim() && (Number(values.stock) < 0 || Number.isNaN(Number(values.stock)))) {
-      nextErrors.stock = "Ingresá un stock válido mayor o igual a 0.";
+      nextErrors.stock = t("errorStockInvalid");
     }
 
     setErrors(nextErrors);
@@ -124,12 +127,12 @@ export function ProductForm({ open, product, onClose, onSuccess }: ProductFormPr
       const result = (await response.json()) as { error?: string };
 
       if (!response.ok) {
-        throw new Error(result.error ?? "No se pudo guardar el producto.");
+        throw new Error(result.error ?? t("errorSave"));
       }
 
       await onSuccess();
     } catch (error) {
-      setFormError(error instanceof Error ? error.message : "No se pudo guardar el producto.");
+      setFormError(error instanceof Error ? error.message : t("errorSave"));
     } finally {
       setIsSaving(false);
     }
@@ -140,10 +143,10 @@ export function ProductForm({ open, product, onClose, onSuccess }: ProductFormPr
       <div className="flex h-full w-full max-w-3xl flex-col overflow-hidden border-l border-zinc-200 bg-zinc-50 shadow-2xl">
         <div className="flex items-start justify-between border-b border-zinc-200 bg-white px-6 py-5 sm:px-8">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-zinc-500">Gestión de productos</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-zinc-500">{t("sectionLabel")}</p>
             <h2 className="mt-2 text-2xl font-semibold tracking-tight text-zinc-950">{modeLabel}</h2>
             <p className="mt-2 text-sm leading-6 text-zinc-600">
-              Completá la información del producto y subí las imágenes para dejarlo listo en el catálogo.
+              {t("description")}
             </p>
           </div>
 
@@ -152,7 +155,7 @@ export function ProductForm({ open, product, onClose, onSuccess }: ProductFormPr
             onClick={onClose}
             disabled={isSaving}
             className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-zinc-300 bg-white text-xl text-zinc-700 transition hover:border-zinc-400 hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-60"
-            aria-label="Cerrar formulario"
+            aria-label={t("closeAriaLabel")}
           >
             ×
           </button>
@@ -168,14 +171,14 @@ export function ProductForm({ open, product, onClose, onSuccess }: ProductFormPr
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="space-y-2 md:col-span-2">
                   <label htmlFor="name" className="text-sm font-medium text-zinc-900">
-                    Nombre *
+                    {t("fieldName")}
                   </label>
                   <input
                     id="name"
                     type="text"
                     value={values.name}
                     onChange={(event) => updateField("name", event.target.value)}
-                    placeholder="Ej. Jarrón de cerámica mate"
+                    placeholder={t("fieldNamePlaceholder")}
                     className="w-full rounded-2xl border border-zinc-300 bg-white px-4 py-3 text-sm text-zinc-950 outline-none transition focus:border-zinc-500 focus:ring-2 focus:ring-zinc-200"
                   />
                   {errors.name ? <p className="text-sm text-red-600">{errors.name}</p> : null}
@@ -183,21 +186,21 @@ export function ProductForm({ open, product, onClose, onSuccess }: ProductFormPr
 
                 <div className="space-y-2 md:col-span-2">
                   <label htmlFor="description" className="text-sm font-medium text-zinc-900">
-                    Descripción
+                    {t("fieldDescription")}
                   </label>
                   <textarea
                     id="description"
                     value={values.description}
                     onChange={(event) => updateField("description", event.target.value)}
                     rows={4}
-                    placeholder="Contá materiales, estilo, medidas o detalles importantes."
+                    placeholder={t("fieldDescriptionPlaceholder")}
                     className="w-full rounded-2xl border border-zinc-300 bg-white px-4 py-3 text-sm text-zinc-950 outline-none transition focus:border-zinc-500 focus:ring-2 focus:ring-zinc-200"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label htmlFor="price" className="text-sm font-medium text-zinc-900">
-                    Precio (€) *
+                    {t("fieldPrice")}
                   </label>
                   <input
                     id="price"
@@ -206,7 +209,7 @@ export function ProductForm({ open, product, onClose, onSuccess }: ProductFormPr
                     step="0.01"
                     value={values.price}
                     onChange={(event) => updateField("price", event.target.value)}
-                    placeholder="49.90"
+                    placeholder={t("fieldPricePlaceholder")}
                     className="w-full rounded-2xl border border-zinc-300 bg-white px-4 py-3 text-sm text-zinc-950 outline-none transition focus:border-zinc-500 focus:ring-2 focus:ring-zinc-200"
                   />
                   {errors.price ? <p className="text-sm text-red-600">{errors.price}</p> : null}
@@ -214,7 +217,7 @@ export function ProductForm({ open, product, onClose, onSuccess }: ProductFormPr
 
                 <div className="space-y-2">
                   <label htmlFor="category" className="text-sm font-medium text-zinc-900">
-                    Categoría *
+                    {t("fieldCategory")}
                   </label>
                   <select
                     id="category"
@@ -233,7 +236,7 @@ export function ProductForm({ open, product, onClose, onSuccess }: ProductFormPr
 
                 <div className="space-y-2">
                   <label htmlFor="stock" className="text-sm font-medium text-zinc-900">
-                    Stock
+                    {t("fieldStock")}
                   </label>
                   <input
                     id="stock"
@@ -242,7 +245,7 @@ export function ProductForm({ open, product, onClose, onSuccess }: ProductFormPr
                     step="1"
                     value={values.stock}
                     onChange={(event) => updateField("stock", event.target.value)}
-                    placeholder="0"
+                    placeholder={t("fieldStockPlaceholder")}
                     className="w-full rounded-2xl border border-zinc-300 bg-white px-4 py-3 text-sm text-zinc-950 outline-none transition focus:border-zinc-500 focus:ring-2 focus:ring-zinc-200"
                   />
                   {errors.stock ? <p className="text-sm text-red-600">{errors.stock}</p> : null}
@@ -250,8 +253,8 @@ export function ProductForm({ open, product, onClose, onSuccess }: ProductFormPr
 
                 <div className="flex items-center justify-between rounded-3xl border border-zinc-200 bg-white px-4 py-4 md:col-span-2">
                   <div>
-                    <p className="text-sm font-medium text-zinc-900">Destacado</p>
-                    <p className="mt-1 text-sm text-zinc-500">Marcá este producto para resaltarlo dentro del panel y el catálogo.</p>
+                    <p className="text-sm font-medium text-zinc-900">{t("fieldFeaturedTitle")}</p>
+                    <p className="mt-1 text-sm text-zinc-500">{t("fieldFeaturedDescription")}</p>
                   </div>
 
                   <button
@@ -273,9 +276,9 @@ export function ProductForm({ open, product, onClose, onSuccess }: ProductFormPr
 
               <div className="rounded-[28px] border border-zinc-200 bg-white p-5 sm:p-6">
                 <ImageUploader
-                  label="Imagen principal"
-                  buttonLabel="Subir imagen principal"
-                  hint="Se usa como miniatura principal del producto. Si subís una nueva, reemplaza la actual."
+                  label={t("imageMainLabel")}
+                  buttonLabel={t("imageMainButton")}
+                  hint={t("imageMainHint")}
                   value={values.imageUrl ? [values.imageUrl] : []}
                   onChange={(images) => updateField("imageUrl", images[0] ?? "")}
                   disabled={isSaving}
@@ -284,9 +287,9 @@ export function ProductForm({ open, product, onClose, onSuccess }: ProductFormPr
 
               <div className="rounded-[28px] border border-zinc-200 bg-white p-5 sm:p-6">
                 <ImageUploader
-                  label="Imágenes adicionales"
-                  buttonLabel="Subir imágenes adicionales"
-                  hint="Podés subir varias fotos para mostrar diferentes ángulos o ambientes."
+                  label={t("imageExtraLabel")}
+                  buttonLabel={t("imageExtraButton")}
+                  hint={t("imageExtraHint")}
                   value={values.images}
                   onChange={(images) => updateField("images", images)}
                   multiple
@@ -304,14 +307,14 @@ export function ProductForm({ open, product, onClose, onSuccess }: ProductFormPr
                 disabled={isSaving}
                 className="inline-flex items-center justify-center rounded-2xl border border-zinc-300 px-4 py-3 text-sm font-semibold text-zinc-800 transition hover:border-zinc-400 hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                Cancelar
+                {t("cancelButton")}
               </button>
               <button
                 type="submit"
                 disabled={isSaving}
                 className="inline-flex items-center justify-center rounded-2xl bg-zinc-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {isSaving ? "Guardando..." : product ? "Guardar cambios" : "Crear producto"}
+                {isSaving ? t("savingButton") : product ? t("saveButton") : t("createButton")}
               </button>
             </div>
           </div>

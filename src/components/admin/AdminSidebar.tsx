@@ -1,22 +1,24 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
-
-const links = [
-  { href: "/admin", label: "Dashboard" },
-  { href: "/admin/products", label: "Productos" },
-  { href: "/admin/orders", label: "Pedidos" },
-];
 
 export function AdminSidebar() {
   const pathname = usePathname();
+  const t = useTranslations("admin.sidebar");
+
+  const links = [
+    { href: "/admin", label: t("dashboard") },
+    { href: "/admin/products", label: t("products") },
+    { href: "/admin/orders", label: t("orders") },
+  ];
 
   return (
     <aside className="flex min-h-screen w-full max-w-64 flex-col border-r border-zinc-200 bg-zinc-50 px-5 py-8">
       <div className="mb-10 space-y-2">
-        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-500">Panel</p>
-        <h2 className="text-2xl font-semibold text-zinc-900">Alma Deco</h2>
+        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-500">{t("panelLabel")}</p>
+        <h2 className="text-2xl font-semibold text-zinc-900">{t("brandName")}</h2>
       </div>
 
       <nav className="space-y-2">

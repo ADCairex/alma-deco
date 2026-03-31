@@ -1,15 +1,18 @@
-import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 
 import { CheckoutPageClient } from "@/components/shop/CheckoutPageClient";
 
-export const metadata: Metadata = {
-  title: "Checkout",
-  description: "Finalizá tu pedido de decoración artesanal en Alma Deco de forma segura.",
-  robots: {
-    index: false,
-    follow: false,
-  },
-};
+export async function generateMetadata() {
+  const t = await getTranslations("metadata.pages");
+  return {
+    title: t("checkoutTitle"),
+    description: t("checkoutDescription"),
+    robots: {
+      index: false,
+      follow: false,
+    },
+  };
+}
 
 export default function CheckoutPage() {
   return <CheckoutPageClient />;

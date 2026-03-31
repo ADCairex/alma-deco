@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from "react";
 
+import { useTranslations } from "next-intl";
+
 import type { Product } from "@/types";
 
 import { ProductForm } from "./ProductForm";
@@ -19,6 +21,7 @@ export function AdminProductsManager({ initialProducts }: AdminProductsManagerPr
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [deletingProductId, setDeletingProductId] = useState<string | null>(null);
   const [pageError, setPageError] = useState<string | null>(null);
+  const t = useTranslations("admin.products");
 
   const filteredProducts = useMemo(() => {
     const normalizedSearch = searchQuery.trim().toLowerCase();
@@ -39,13 +42,13 @@ export function AdminProductsManager({ initialProducts }: AdminProductsManagerPr
       const result = (await response.json()) as Product[] | { error?: string };
 
       if (!response.ok || !Array.isArray(result)) {
-        const message = Array.isArray(result) ? "No se pudo actualizar la lista de productos." : (result.error ?? "No se pudo actualizar la lista de productos.");
+        const message = Array.isArray(result) ? t("errorRefresh") : (result.error ?? t("errorRefresh"));
         throw new Error(message);
       }
 
       setProducts(result);
     } catch (error) {
-      setPageError(error instanceof Error ? error.message : "No se pudo actualizar la lista de productos.");
+      setPageError(error instanceof Error ? error.message : t("errorRefresh"));
     } finally {
       setIsRefreshing(false);
     }
@@ -62,7 +65,7 @@ export function AdminProductsManager({ initialProducts }: AdminProductsManagerPr
   }
 
   async function handleDeleteProduct(product: Product) {
-    const confirmed = window.confirm(`¿Seguro que querés eliminar “${product.name}”? Esta acción no se puede deshacer.`);
+    const confirmed = window.confirm(t("deleteConfirm", { name: product.name }));
 
     if (!confirmed) {
       return;
@@ -79,12 +82,12 @@ export function AdminProductsManager({ initialProducts }: AdminProductsManagerPr
       const result = (await response.json()) as { error?: string };
 
       if (!response.ok) {
-        throw new Error(result.error ?? "No se pudo eliminar el producto.");
+        throw new Error(result.error ?? t("errorDelete"));
       }
 
       await refreshProducts();
     } catch (error) {
-      setPageError(error instanceof Error ? error.message : "No se pudo eliminar el producto.");
+      setPageError(error instanceof Error ? error.message : t("errorDelete"));
     } finally {
       setDeletingProductId(null);
     }
@@ -98,13 +101,10 @@ export function AdminProductsManager({ initialProducts }: AdminProductsManagerPr
       <div className="rounded-[32px] border border-zinc-200 bg-white p-6 shadow-sm lg:p-8">
         <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
           <div className="space-y-3">
-            <span className="inline-flex items-center rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-zinc-500">
-              F2 · Admin Products CRUD
-            </span>
             <div className="space-y-2">
-              <h1 className="text-3xl font-semibold tracking-tight text-zinc-950 sm:text-4xl">Gestión de productos</h1>
+              <h1 className="text-3xl font-semibold tracking-tight text-zinc-950 sm:text-4xl">{t("title")}</h1>
               <p className="max-w-3xl text-sm leading-6 text-zinc-600 sm:text-base">
-                Creá, editá y eliminá productos del catálogo. Subí imágenes, actualizá precios y mantené el stock ordenado desde un solo lugar.
+                {t("description")}
               </p>
             </div>
           </div>
@@ -112,14 +112,14 @@ export function AdminProductsManager({ initialProducts }: AdminProductsManagerPr
           <div className="flex flex-col gap-3 sm:flex-row">
             <div className="min-w-[240px] flex-1">
               <label htmlFor="product-search" className="sr-only">
-                Buscar producto por nombre
+                {t("searchLabel")}
               </label>
               <input
                 id="product-search"
                 type="search"
                 value={searchQuery}
                 onChange={(event) => setSearchQuery(event.target.value)}
-                placeholder="Buscar por nombre..."
+                placeholder={t("searchPlaceholder")}
                 className="w-full rounded-2xl border border-zinc-300 bg-zinc-50 px-4 py-3 text-sm text-zinc-950 outline-none transition focus:border-zinc-500 focus:ring-2 focus:ring-zinc-200"
               />
             </div>
@@ -129,23 +129,23 @@ export function AdminProductsManager({ initialProducts }: AdminProductsManagerPr
               onClick={handleCreateProduct}
               className="inline-flex items-center justify-center rounded-2xl bg-zinc-950 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-zinc-800"
             >
-              Nuevo producto
+              {t("newProductButton")}
             </button>
           </div>
         </div>
 
         <div className="mt-6 grid gap-4 md:grid-cols-3">
           <div className="rounded-3xl border border-zinc-200 bg-zinc-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-zinc-500">Total de productos</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-zinc-500">{t("statsTotalLabel")}</p>
             <p className="mt-2 text-3xl font-semibold text-zinc-950">{products.length}</p>
           </div>
           <div className="rounded-3xl border border-zinc-200 bg-zinc-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-zinc-500">Productos destacados</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-zinc-500">{t("statsFeaturedLabel")}</p>
             <p className="mt-2 text-3xl font-semibold text-zinc-950">{products.filter((product) => product.featured).length}</p>
           </div>
           <div className="rounded-3xl border border-zinc-200 bg-zinc-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-zinc-500">Estado</p>
-            <p className="mt-2 text-sm font-medium text-zinc-700">{isRefreshing ? "Actualizando catálogo..." : "Catálogo sincronizado"}</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-zinc-500">{t("statsStatusLabel")}</p>
+            <p className="mt-2 text-sm font-medium text-zinc-700">{isRefreshing ? t("statusUpdating") : t("statusSynced")}</p>
           </div>
         </div>
       </div>
@@ -156,14 +156,14 @@ export function AdminProductsManager({ initialProducts }: AdminProductsManagerPr
 
       {!hasProducts ? (
         <div className="rounded-[32px] border border-dashed border-zinc-300 bg-zinc-50 px-6 py-14 text-center shadow-sm">
-          <h2 className="text-2xl font-semibold text-zinc-950">No hay productos. ¡Crea el primero!</h2>
-          <p className="mt-3 text-sm leading-6 text-zinc-500">Arrancá cargando la ficha inicial del catálogo para empezar a gestionar tu tienda.</p>
+          <h2 className="text-2xl font-semibold text-zinc-950">{t("emptyTitle")}</h2>
+          <p className="mt-3 text-sm leading-6 text-zinc-500">{t("emptyDescription")}</p>
           <button
             type="button"
             onClick={handleCreateProduct}
             className="mt-6 inline-flex items-center justify-center rounded-2xl bg-zinc-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-zinc-800"
           >
-            Crear primer producto
+            {t("emptyCreateButton")}
           </button>
         </div>
       ) : hasFilteredProducts ? (
@@ -175,8 +175,8 @@ export function AdminProductsManager({ initialProducts }: AdminProductsManagerPr
         />
       ) : (
         <div className="rounded-[32px] border border-zinc-200 bg-white px-6 py-14 text-center shadow-sm">
-          <h2 className="text-2xl font-semibold text-zinc-950">No encontramos productos con ese nombre</h2>
-          <p className="mt-3 text-sm leading-6 text-zinc-500">Probá con otro término o limpiá la búsqueda para ver todo el catálogo.</p>
+          <h2 className="text-2xl font-semibold text-zinc-950">{t("noResultsTitle")}</h2>
+          <p className="mt-3 text-sm leading-6 text-zinc-500">{t("noResultsDescription")}</p>
         </div>
       )}
 

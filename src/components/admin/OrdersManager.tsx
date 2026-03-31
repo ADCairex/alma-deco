@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from "react";
 
+import { useTranslations } from "next-intl";
+
 import { ORDER_STATUS_LABELS } from "@/lib/admin-orders";
 import type { AdminOrder, AdminOrderStatus } from "@/types";
 
@@ -13,19 +15,20 @@ type OrdersManagerProps = {
 
 type OrderFilter = "all" | AdminOrderStatus;
 
-const FILTERS: Array<{ value: OrderFilter; label: string }> = [
-  { value: "all", label: "Todos" },
-  { value: "pending", label: "Pendientes" },
-  { value: "paid", label: "Pagados" },
-  { value: "shipped", label: "Enviados" },
-  { value: "delivered", label: "Entregados" },
-  { value: "cancelled", label: "Cancelados" },
-];
-
 export function OrdersManager({ initialOrders }: OrdersManagerProps) {
   const [orders, setOrders] = useState(initialOrders);
   const [activeFilter, setActiveFilter] = useState<OrderFilter>("all");
   const [expandedOrderId, setExpandedOrderId] = useState<string | null>(initialOrders[0]?.id ?? null);
+  const t = useTranslations("admin.orders");
+
+  const FILTERS: Array<{ value: OrderFilter; label: string }> = [
+    { value: "all", label: t("filterAll") },
+    { value: "pending", label: t("filterPending") },
+    { value: "paid", label: t("filterPaid") },
+    { value: "shipped", label: t("filterShipped") },
+    { value: "delivered", label: t("filterDelivered") },
+    { value: "cancelled", label: t("filterCancelled") },
+  ];
 
   const filteredOrders = useMemo(() => {
     if (activeFilter === "all") {
@@ -44,6 +47,7 @@ export function OrdersManager({ initialOrders }: OrdersManagerProps) {
         label: ORDER_STATUS_LABELS[filter.value as AdminOrderStatus],
         count: orders.filter((order) => order.status === filter.value).length,
       })),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [orders],
   );
 
@@ -60,28 +64,25 @@ export function OrdersManager({ initialOrders }: OrdersManagerProps) {
       <div className="rounded-[32px] border border-zinc-200 bg-white p-6 shadow-sm lg:p-8">
         <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
           <div className="space-y-3">
-            <span className="inline-flex items-center rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-zinc-500">
-              F9 · Admin Orders Management
-            </span>
             <div className="space-y-2">
-              <h1 className="text-3xl font-semibold tracking-tight text-zinc-950 sm:text-4xl">Gestión de pedidos</h1>
+              <h1 className="text-3xl font-semibold tracking-tight text-zinc-950 sm:text-4xl">{t("title")}</h1>
               <p className="max-w-3xl text-sm leading-6 text-zinc-600 sm:text-base">
-                Seguimiento completo de compras, datos de cliente y actualización de estados desde un tablero claro para operación diaria.
+                {t("description")}
               </p>
             </div>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-3 xl:min-w-[460px]">
             <div className="rounded-3xl border border-zinc-200 bg-zinc-50 p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-zinc-500">Total pedidos</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-zinc-500">{t("statsTotalLabel")}</p>
               <p className="mt-2 text-3xl font-semibold text-zinc-950">{orders.length}</p>
             </div>
             <div className="rounded-3xl border border-zinc-200 bg-zinc-50 p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-zinc-500">Pendientes</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-zinc-500">{t("statsPendingLabel")}</p>
               <p className="mt-2 text-3xl font-semibold text-zinc-950">{orders.filter((order) => order.status === "pending").length}</p>
             </div>
             <div className="rounded-3xl border border-zinc-200 bg-zinc-50 p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-zinc-500">Pagados</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-zinc-500">{t("statsPaidLabel")}</p>
               <p className="mt-2 text-3xl font-semibold text-zinc-950">{orders.filter((order) => order.status === "paid").length}</p>
             </div>
           </div>
@@ -135,11 +136,9 @@ export function OrdersManager({ initialOrders }: OrdersManagerProps) {
         />
       ) : (
         <div className="rounded-[32px] border border-dashed border-zinc-300 bg-zinc-50 px-6 py-16 text-center shadow-sm">
-          <h2 className="text-2xl font-semibold text-zinc-950">{hasOrders ? "No hay pedidos con este estado" : "No hay pedidos todavía"}</h2>
+          <h2 className="text-2xl font-semibold text-zinc-950">{hasOrders ? t("emptyFilterTitle") : t("emptyNoOrders")}</h2>
           <p className="mt-3 text-sm leading-6 text-zinc-500">
-            {hasOrders
-              ? "Probá con otro filtro para revisar pedidos en otros estados."
-              : "Cuando entren compras nuevas vas a poder ver clientes, artículos y pagos desde acá."}
+            {hasOrders ? t("emptyFilterDescription") : t("emptyNoOrdersDescription")}
           </p>
         </div>
       )}

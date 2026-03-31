@@ -1,4 +1,5 @@
 import { AuthError } from "next-auth";
+import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
 
 import { auth, signIn } from "@/auth";
@@ -9,12 +10,6 @@ type AdminLoginPageProps = {
   }>;
 };
 
-const errorMessages: Record<string, string> = {
-  credentials: "Email o contraseña incorrectos.",
-  missing_fields: "Completá tu email y contraseña para continuar.",
-  default: "No se pudo iniciar sesión. Intentá nuevamente.",
-};
-
 export default async function AdminLoginPage({ searchParams }: AdminLoginPageProps) {
   const session = await auth();
 
@@ -22,18 +17,25 @@ export default async function AdminLoginPage({ searchParams }: AdminLoginPagePro
     redirect("/admin");
   }
 
+  const t = await getTranslations("auth");
   const { error } = await searchParams;
-  const errorMessage = error ? (errorMessages[error] ?? errorMessages.default) : null;
+
+  const errorKeyMap: Record<string, string> = {
+    credentials: t("errorCredentials"),
+    missing_fields: t("errorMissingFields"),
+  };
+
+  const errorMessage = error ? (errorKeyMap[error] ?? t("errorDefault")) : null;
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-100 px-6 py-12">
       <div className="w-full max-w-md rounded-3xl border border-zinc-200 bg-white p-8 shadow-sm sm:p-10">
         <div className="space-y-3">
-          <p className="text-xs font-semibold uppercase tracking-[0.32em] text-zinc-500">Administración</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.32em] text-zinc-500">{t("sectionLabel")}</p>
           <div className="space-y-2">
-            <h1 className="text-3xl font-semibold tracking-tight text-zinc-950">Iniciar sesión</h1>
+            <h1 className="text-3xl font-semibold tracking-tight text-zinc-950">{t("loginTitle")}</h1>
             <p className="text-sm leading-6 text-zinc-600">
-              Accedé al panel interno de Alma Deco con tus credenciales de administrador.
+              {t("loginDescription")}
             </p>
           </div>
         </div>
@@ -67,7 +69,7 @@ export default async function AdminLoginPage({ searchParams }: AdminLoginPagePro
         >
           <div className="space-y-2">
             <label htmlFor="email" className="text-sm font-medium text-zinc-800">
-              Email
+              {t("fieldEmail")}
             </label>
             <input
               id="email"
@@ -76,13 +78,13 @@ export default async function AdminLoginPage({ searchParams }: AdminLoginPagePro
               autoComplete="email"
               required
               className="w-full rounded-2xl border border-zinc-300 bg-white px-4 py-3 text-sm text-zinc-950 outline-none transition focus:border-zinc-500 focus:ring-2 focus:ring-zinc-200"
-              placeholder="admin@almadeco.com"
+              placeholder={t("fieldEmailPlaceholder")}
             />
           </div>
 
           <div className="space-y-2">
             <label htmlFor="password" className="text-sm font-medium text-zinc-800">
-              Contraseña
+              {t("fieldPassword")}
             </label>
             <input
               id="password"
@@ -105,7 +107,7 @@ export default async function AdminLoginPage({ searchParams }: AdminLoginPagePro
             type="submit"
             className="inline-flex w-full items-center justify-center rounded-2xl bg-zinc-950 px-4 py-3 text-sm font-semibold text-white transition hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-zinc-300 focus:ring-offset-2"
           >
-            Entrar al panel
+            {t("submitButton")}
           </button>
         </form>
       </div>

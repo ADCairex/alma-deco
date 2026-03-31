@@ -1,16 +1,19 @@
-import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 
 import { SuccessPageClient } from "@/components/shop/SuccessPageClient";
 import { prisma } from "@/lib/prisma";
 
-export const metadata: Metadata = {
-  title: "Pedido Confirmado",
-  description: "Tu pedido en Alma Deco fue confirmado correctamente.",
-  robots: {
-    index: false,
-    follow: false,
-  },
-};
+export async function generateMetadata() {
+  const t = await getTranslations("metadata.pages");
+  return {
+    title: t("successTitle"),
+    description: t("successDescription"),
+    robots: {
+      index: false,
+      follow: false,
+    },
+  };
+}
 
 type SuccessPageProps = {
   searchParams: Promise<{

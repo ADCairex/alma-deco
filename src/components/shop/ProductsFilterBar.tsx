@@ -1,7 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { usePathname, useSearchParams } from "next/navigation";
+
+const ALL_SENTINEL = "__all__";
 
 type ProductsFilterBarProps = {
   categories: readonly string[];
@@ -9,10 +12,11 @@ type ProductsFilterBarProps = {
 };
 
 export function ProductsFilterBar({ categories, activeCategory }: ProductsFilterBarProps) {
+  const t = useTranslations("shop.products");
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const items = ["Todos", ...categories];
+  const items = [ALL_SENTINEL, ...categories];
 
   return (
     <div className="flex flex-wrap gap-3">
@@ -21,14 +25,14 @@ export function ProductsFilterBar({ categories, activeCategory }: ProductsFilter
 
         params.delete("categoria");
 
-        if (item === "Todos") {
+        if (item === ALL_SENTINEL) {
           params.delete("category");
         } else {
           params.set("category", item);
         }
 
         const href = params.size ? `${pathname}?${params.toString()}` : pathname;
-        const isActive = item === "Todos" ? !activeCategory : activeCategory === item;
+        const isActive = item === ALL_SENTINEL ? !activeCategory : activeCategory === item;
 
         return (
           <Link
@@ -40,7 +44,7 @@ export function ProductsFilterBar({ categories, activeCategory }: ProductsFilter
                 : "border-ink/12 bg-white text-ink/72 hover:border-ink/30 hover:text-ink"
             }`}
           >
-            {item}
+            {item === ALL_SENTINEL ? t("filterAll") : item}
           </Link>
         );
       })}

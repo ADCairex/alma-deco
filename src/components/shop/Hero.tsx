@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
 function ChevronIcon({ direction = "right" }: { direction?: "left" | "right" }) {
   return (
@@ -13,12 +14,14 @@ function ChevronIcon({ direction = "right" }: { direction?: "left" | "right" }) 
   );
 }
 
-export function Hero() {
+export async function Hero() {
+  const t = await getTranslations("shop.home");
+
   return (
     <section className="relative isolate min-h-[70vh] overflow-hidden bg-bg-dark sm:min-h-[74vh]">
       <Image
         src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=1920&q=80&auto=format&fit=crop"
-        alt="Interior rústico de Alma Deco"
+        alt={t("heroImageAlt")}
         fill
         priority
         sizes="100vw"
@@ -40,12 +43,12 @@ export function Hero() {
       <div className="site-container relative flex min-h-[70vh] items-center py-16 sm:min-h-[74vh] sm:py-20 lg:py-24">
         <div className="max-w-xl space-y-6 text-white sm:space-y-8">
           <h1 className="text-shadow-hero font-display text-[3.3rem] leading-[0.88] tracking-[0.1em] uppercase text-white sm:text-[4.5rem] lg:text-[5.6rem]">
-            <span className="block">Nueva</span>
-            <span className="block">Colección</span>
+            <span className="block">{t("heroTitle1")}</span>
+            <span className="block">{t("heroTitle2")}</span>
           </h1>
 
           <Link href="/products?nueva=1" className="pill-light-outline w-fit">
-            Descúbrela aquí
+            {t("heroCta")}
           </Link>
         </div>
       </div>

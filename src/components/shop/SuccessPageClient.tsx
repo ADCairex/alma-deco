@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 import { useCart } from "@/store/CartContext";
 
@@ -52,20 +53,9 @@ function formatPrice(amount: number, currency: string) {
   }).format(amount);
 }
 
-function statusLabel(status: string) {
-  switch (status) {
-    case "paid":
-      return "Pagado";
-    case "cancelled":
-      return "Cancelado";
-    case "pending":
-      return "Pendiente";
-    default:
-      return status;
-  }
-}
-
 export function SuccessPageClient({ order, orderId, sessionId, paypalToken }: SuccessPageClientProps) {
+  const t = useTranslations("shop.success");
+  const tCommon = useTranslations("common");
   const { clearCart } = useCart();
   const [currentOrder, setCurrentOrder] = useState(order);
   const [captureError, setCaptureError] = useState<string | null>(null);
@@ -113,7 +103,7 @@ export function SuccessPageClient({ order, orderId, sessionId, paypalToken }: Su
         const data = (await response.json()) as PayPalCaptureResponse;
 
         if (!response.ok || !data.success) {
-          throw new Error(data.error ?? "No pudimos confirmar tu pago con PayPal.");
+          throw new Error(data.error ?? t("errorPaypalCapture"));
         }
 
         if (!cancelled) {
@@ -122,7 +112,7 @@ export function SuccessPageClient({ order, orderId, sessionId, paypalToken }: Su
         }
       } catch (error) {
         if (!cancelled) {
-          setCaptureError(error instanceof Error ? error.message : "No pudimos confirmar tu pago con PayPal.");
+          setCaptureError(error instanceof Error ? error.message : t("errorPaypalCapture"));
         }
       } finally {
         if (!cancelled) {
@@ -139,12 +129,12 @@ export function SuccessPageClient({ order, orderId, sessionId, paypalToken }: Su
   }, [clearCart, currentOrder, orderId, paypalToken, shouldAutoCapturePayPal]);
 
   const isPaid = Boolean(sessionId) || currentOrder?.status === "paid";
-  const title = captureError ? "No pudimos confirmar tu pago" : isCapturing ? "Confirmando tu pago…" : "¡PEDIDO REALIZADO!";
+  const title = captureError ? t("titleFailed") : isCapturing ? t("titleConfirming") : t("title");
   const description = captureError
     ? captureError
     : isCapturing
-      ? "Estamos validando la captura de PayPal. No cierres esta ventana todavía."
-      : "Gracias por tu compra. Recibirás un email de confirmación en breve.";
+      ? t("descriptionConfirming")
+      : t("description");
 
   return (
     <section className="section-space bg-paper">
@@ -155,13 +145,13 @@ export function SuccessPageClient({ order, orderId, sessionId, paypalToken }: Su
               <CheckIcon />
             </div>
 
-            <p className="editorial-label mt-8 text-ink/44">Pedido confirmado</p>
+            <p className="editorial-label mt-8 text-ink/44">{t("editorialLabel")}</p>
             <h1 className="section-title mt-5">{title}</h1>
             <p className="mx-auto mt-6 max-w-2xl text-sm leading-8 text-ink/66 sm:text-base">{description}</p>
 
             {orderId ? (
               <p className="mt-6 text-[0.82rem] uppercase tracking-[0.24em] text-ink/56">
-                Número de pedido · <span className="font-semibold text-ink">{orderId}</span>
+                {t("orderNumber", { orderId })}
               </p>
             ) : null}
           </div>
@@ -169,13 +159,13 @@ export function SuccessPageClient({ order, orderId, sessionId, paypalToken }: Su
           {currentOrder ? (
             <div className="mt-12 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(280px,0.8fr)]">
               <div className="rounded-[1.75rem] border border-line bg-white p-6">
-                <h2 className="font-display text-[1.5rem] uppercase tracking-[0.12em] text-ink">Detalle del pedido</h2>
+                <h2 className="font-display text-[1.5rem] uppercase tracking-[0.12em] text-ink">{t("orderDetailTitle")}</h2>
                 <div className="mt-6 space-y-4">
                   {currentOrder.items.map((item) => (
                     <div key={item.id} className="flex items-center justify-between gap-4 border-b border-line/70 pb-4 last:border-b-0 last:pb-0">
                       <div>
                         <p className="text-sm font-medium uppercase tracking-[0.12em] text-ink">{item.name}</p>
-                        <p className="mt-1 text-sm text-ink/58">{item.quantity} × {formatPrice(item.price, currentOrder.currency)}</p>
+                        <p className="mt-1 text-sm text-ink/58">{t("itemQuantityAndPrice", { quantity: item.quantity, price: formatPrice(item.price, currentOrder.currency) })}</p>
                       </div>
                       <p className="text-sm font-medium text-ink">{formatPrice(item.price * item.quantity, currentOrder.currency)}</p>
                     </div>
@@ -184,26 +174,26 @@ export function SuccessPageClient({ order, orderId, sessionId, paypalToken }: Su
               </div>
 
               <aside className="rounded-[1.75rem] border border-line bg-white p-6">
-                <h2 className="font-display text-[1.5rem] uppercase tracking-[0.12em] text-ink">Resumen</h2>
+                <h2 className="font-display text-[1.5rem] uppercase tracking-[0.12em] text-ink">{t("summaryTitle")}</h2>
                 <dl className="mt-6 space-y-4 text-sm text-ink/70">
                   <div className="flex items-start justify-between gap-4">
-                    <dt>Cliente</dt>
+                    <dt>{t("summaryCustomer")}</dt>
                     <dd className="text-right font-medium text-ink">{currentOrder.customerName}</dd>
                   </div>
                   <div className="flex items-start justify-between gap-4">
-                    <dt>Email</dt>
+                    <dt>{t("summaryEmail")}</dt>
                     <dd className="text-right font-medium text-ink">{currentOrder.customerEmail}</dd>
                   </div>
                   <div className="flex items-start justify-between gap-4">
-                    <dt>Pago</dt>
-                    <dd className="text-right font-medium uppercase text-ink">{currentOrder.paymentMethod ?? "Sin definir"}</dd>
+                    <dt>{t("summaryPayment")}</dt>
+                    <dd className="text-right font-medium uppercase text-ink">{currentOrder.paymentMethod ?? t("summaryPaymentUndefined")}</dd>
                   </div>
                   <div className="flex items-start justify-between gap-4">
-                    <dt>Estado</dt>
-                    <dd className="text-right font-medium text-ink">{statusLabel(currentOrder.status)}</dd>
+                    <dt>{t("summaryStatus")}</dt>
+                    <dd className="text-right font-medium text-ink">{currentOrder.status === "paid" ? t("statusPaid") : currentOrder.status === "cancelled" ? t("statusCancelled") : currentOrder.status === "pending" ? t("statusPending") : currentOrder.status}</dd>
                   </div>
                   <div className="flex items-start justify-between gap-4 border-t border-line pt-4 text-base">
-                    <dt className="font-semibold uppercase tracking-[0.12em] text-ink">Total</dt>
+                    <dt className="font-semibold uppercase tracking-[0.12em] text-ink">{tCommon("total")}</dt>
                     <dd className="text-right font-semibold text-ink">{formatPrice(currentOrder.total, currentOrder.currency)}</dd>
                   </div>
                 </dl>
@@ -211,16 +201,16 @@ export function SuccessPageClient({ order, orderId, sessionId, paypalToken }: Su
             </div>
           ) : (
             <div className="mt-12 rounded-[1.75rem] border border-line bg-white p-6 text-center text-sm text-ink/66">
-              No encontramos los detalles del pedido, pero si completaste el pago podés escribirnos con tu email para ayudarte.
+              {t("noOrderDetails")}
             </div>
           )}
 
           <div className="mt-10 text-center">
             <Link href="/" className="pill-dark">
-              Volver a la tienda
+              {t("backToStoreButton")}
             </Link>
             {!isPaid && !captureError ? (
-              <p className="mt-4 text-sm text-ink/58">Estamos terminando de sincronizar el estado del pago.</p>
+              <p className="mt-4 text-sm text-ink/58">{t("syncingPayment")}</p>
             ) : null}
           </div>
         </div>

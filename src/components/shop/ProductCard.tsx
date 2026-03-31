@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 import { formatProductPrice } from "@/lib/shop-products";
 import { useCart } from "@/store/CartContext";
@@ -16,6 +17,7 @@ type ProductCardProps = {
 };
 
 export function ProductCard({ id, name, price, imageUrl, category, currency = "EUR" }: ProductCardProps) {
+  const tCommon = useTranslations("common");
   const { addItem } = useCart();
 
   return (
@@ -53,7 +55,7 @@ export function ProductCard({ id, name, price, imageUrl, category, currency = "E
               }}
               className="cart-overlay-button absolute inset-x-5 bottom-5 z-10 justify-center text-center"
             >
-              Añadir al carrito
+              {tCommon("addToCart")}
             </button>
           </div>
         </div>

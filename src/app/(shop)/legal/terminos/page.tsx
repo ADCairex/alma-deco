@@ -24,7 +24,7 @@ export default function TerminosPage() {
           <h2 className="text-base font-semibold uppercase tracking-[0.16em] text-ink">1. Identificación del vendedor</h2>
           <p>
             El presente sitio web es titularidad de Alma Deco, CIF: XXXXXXXXX, con domicilio en [Dirección fiscal], España
-            (en adelante, “Alma Deco”). Para cualquier consulta relacionada con estas condiciones, podés escribir a
+            (en adelante, "Alma Deco"). Para cualquier consulta relacionada con estas condiciones, podés escribir a
             info@almadeco.com.
           </p>
         </section>

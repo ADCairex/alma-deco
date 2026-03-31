@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import { getTranslations } from "next-intl/server";
 
 import { DeerLogo } from "@/components/icons/DeerLogo";
 import { Hero } from "@/components/shop/Hero";
@@ -32,6 +33,7 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
+  const t = await getTranslations("shop.home");
   const featuredProducts = await prisma.product.findMany({
     where: {
       featured: true,
@@ -71,7 +73,7 @@ export default async function HomePage() {
       <section className="section-space bg-paper">
         <div className="site-container">
           <div className="mb-12 flex flex-col items-center gap-4 text-center sm:mb-14">
-            <h2 className="section-title">Top Ventas</h2>
+            <h2 className="section-title">{t("topVentasTitle")}</h2>
             <span className="h-px w-28 bg-ink/70" />
           </div>
 
@@ -83,8 +85,8 @@ export default async function HomePage() {
             </div>
           ) : (
             <div className="rounded-[2rem] border border-line bg-stone-50 px-8 py-14 text-center">
-              <p className="editorial-label text-ink/46">Top Ventas</p>
-              <p className="mt-4 text-lg text-ink/72">Todavía no hay productos destacados cargados para mostrar.</p>
+              <p className="editorial-label text-ink/46">{t("topVentasTitle")}</p>
+              <p className="mt-4 text-lg text-ink/72">{t("topVentasEmpty")}</p>
             </div>
           )}
         </div>
@@ -93,7 +95,7 @@ export default async function HomePage() {
       <section className="relative isolate overflow-hidden bg-bg-dark">
         <Image
           src="https://images.unsplash.com/photo-1616137466211-f939a420be84?w=1600&q=80&auto=format&fit=crop"
-          alt="Salón Alma Deco"
+          alt={t("midBannerImageAlt")}
           fill
           sizes="100vw"
           className="object-cover"
@@ -102,7 +104,7 @@ export default async function HomePage() {
         <div className="site-container relative flex min-h-[350px] items-center py-16">
           <div className="max-w-3xl">
             <h2 className="text-shadow-hero font-display text-[2.2rem] leading-[0.94] tracking-[0.1em] uppercase text-white sm:text-[2.8rem] lg:text-[3.35rem]">
-              Crea un espacio único
+              {t("midBannerTitle")}
             </h2>
           </div>
         </div>
@@ -121,25 +123,21 @@ export default async function HomePage() {
             </div>
 
             <blockquote className="font-display text-[1.55rem] leading-[1.45] text-white italic sm:text-[1.85rem]">
-              “Cada rincón merece una pieza capaz de contar una historia serena, cálida y vivida.”
+              {t("brandQuote")}
             </blockquote>
 
-            <p className="mt-3 text-[0.76rem] uppercase tracking-[0.22em] text-white/56">Alma Deco Studio</p>
+            <p className="mt-3 text-[0.76rem] uppercase tracking-[0.22em] text-white/56">{t("brandQuoteAttribution")}</p>
 
             <div className="mt-8 space-y-5 text-[0.95rem] leading-8 text-white/74">
-              <p>
-                Diseñamos y curamos decoración artesanal inspirada en la calidez mediterránea, los oficios lentos y la belleza imperfecta de los materiales naturales.
-              </p>
-              <p>
-                Desde cerámicas, fibras y maderas nobles hasta pequeños objetos con alma, cada colección busca transformar la casa en un refugio con identidad propia y sensibilidad española.
-              </p>
+              <p>{t("brandDescription1")}</p>
+              <p>{t("brandDescription2")}</p>
             </div>
           </div>
 
           <div className="relative min-h-[420px] overflow-hidden sm:min-h-[540px]">
             <Image
               src="https://images.unsplash.com/photo-1556909114-44e3e70034e2?w=1200&q=80&auto=format&fit=crop"
-              alt="Persona decorando una estancia con piezas Alma Deco"
+              alt={t("brandSectionImageAlt")}
               fill
               sizes="(min-width: 1024px) 52vw, 100vw"
               className="object-cover"

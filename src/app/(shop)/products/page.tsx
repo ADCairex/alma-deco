@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import { getTranslations } from "next-intl/server";
 
 import { ProductCard } from "@/components/shop/ProductCard";
 import { ProductsFilterBar } from "@/components/shop/ProductsFilterBar";
@@ -19,30 +20,32 @@ type ProductsPageProps = {
   }>;
 };
 
-export const metadata: Metadata = {
-  title: "Colección",
-  description:
-    "Explorá la colección de Alma Deco y descubrí piezas de decoración rústica artesanal con materiales nobles, calidez mediterránea y carácter editorial.",
-  alternates: {
-    canonical: "/products",
-  },
-  openGraph: {
-    title: "Colección",
-    description:
-      "Explorá la colección de Alma Deco y descubrí piezas de decoración rústica artesanal con materiales nobles, calidez mediterránea y carácter editorial.",
-    url: "/products",
-  },
-};
-
-const sortLabels = {
-  newest: "Más recientes",
-  price_asc: "Precio ascendente",
-  price_desc: "Precio descendente",
-} as const;
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("metadata.pages");
+  return {
+    title: t("productsTitle"),
+    description: t("productsDescription"),
+    alternates: {
+      canonical: "/products",
+    },
+    openGraph: {
+      title: t("productsTitle"),
+      description: t("productsDescription"),
+      url: "/products",
+    },
+  };
+}
 
 export default async function ProductsPage({ searchParams }: ProductsPageProps) {
+  const t = await getTranslations("shop.products");
   const resolvedSearchParams = await searchParams;
   const filters = normalizePublicProductQuery(resolvedSearchParams);
+
+  const sortLabels = {
+    newest: t("sortNewest"),
+    price_asc: t("sortPriceAsc"),
+    price_desc: t("sortPriceDesc"),
+  } as const;
 
   const products = await prisma.product.findMany({
     where: buildPublicProductsWhere(filters),
@@ -56,7 +59,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
       <section className="relative isolate overflow-hidden bg-bg-dark">
         <Image
           src="https://images.unsplash.com/photo-1513694203232-719a280e022f?w=1800&q=80&auto=format&fit=crop"
-          alt="Colección Alma Deco"
+          alt={t("pageHeroImageAlt")}
           fill
           sizes="100vw"
           className="object-cover"
@@ -65,12 +68,12 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
 
         <div className="site-container relative flex min-h-[230px] items-end py-14 sm:min-h-[250px]">
           <div className="max-w-2xl space-y-5 text-white">
-            <p className="editorial-label text-white/72">Alma Deco Collection</p>
+            <p className="editorial-label text-white/72">{t("pageHeroBreadcrumb")}</p>
             <h1 className="font-display text-[2.2rem] uppercase tracking-[0.14em] text-shadow-hero sm:text-[3rem]">
-              Nuestros productos
+              {t("pageHeroTitle")}
             </h1>
             <p className="max-w-xl text-sm leading-7 text-white/76 sm:text-base">
-              Una selección de piezas con mirada editorial, materiales cálidos y una presencia serena para habitar cada rincón.
+              {t("pageHeroDescription")}
             </p>
           </div>
         </div>
@@ -83,19 +86,19 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
               <ProductsFilterBar categories={PRODUCT_CATEGORIES} activeCategory={filters.category} />
 
               <div className="flex flex-wrap gap-3 text-[0.75rem] uppercase tracking-[0.18em] text-ink/52">
-                <span>{normalizedProducts.length} productos</span>
+                <span>{t("count", { count: normalizedProducts.length })}</span>
                 <span>•</span>
                 <span>{sortLabels[filters.sort]}</span>
                 {filters.featured ? (
                   <>
                     <span>•</span>
-                    <span>Destacados</span>
+                    <span>{t("featured")}</span>
                   </>
                 ) : null}
                 {filters.search ? (
                   <>
                     <span>•</span>
-                    <span>Búsqueda: “{filters.search}”</span>
+                    <span>{t("searchLabel", { term: filters.search })}</span>
                   </>
                 ) : null}
               </div>
@@ -110,9 +113,9 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
             </div>
           ) : (
             <div className="rounded-[2rem] border border-line bg-stone-50 px-8 py-16 text-center">
-              <p className="font-display text-2xl uppercase tracking-[0.16em] text-ink">No se encontraron productos en esta categoría</p>
+              <p className="font-display text-2xl uppercase tracking-[0.16em] text-ink">{t("emptyTitle")}</p>
               <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-ink/62 sm:text-base">
-                Probá cambiar la categoría o volver a la colección completa para descubrir otras piezas de la casa.
+                {t("emptyDescription")}
               </p>
             </div>
           )}

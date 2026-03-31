@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getMessages } from "next-intl/server";
 
 import "./globals.css";
 
@@ -61,14 +63,21 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
+  const messages = await getMessages();
+
   return (
-    <html lang="es" className={`${inter.variable} ${playfairDisplay.variable} h-full scroll-smooth`}>
-      <body className="min-h-full bg-paper font-sans text-ink antialiased">{children}</body>
+    <html lang={locale} className={`${inter.variable} ${playfairDisplay.variable} h-full scroll-smooth`}>
+      <body className="min-h-full bg-paper font-sans text-ink antialiased">
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          {children}
+        </NextIntlClientProvider>
+      </body>
     </html>
   );
 }
