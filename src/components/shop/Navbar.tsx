@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 
+import { commerceEnabled } from "@/lib/commerce-config";
 import { useCart } from "@/store/CartContext";
 
 function SearchIcon() {
@@ -35,7 +36,6 @@ function MenuIcon({ open }: { open: boolean }) {
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const { itemCount } = useCart();
   const t = useTranslations("shop.nav");
 
   const navLinks = [
@@ -98,8 +98,10 @@ export function Navbar() {
                   <input
                     type="search"
                     aria-label={t("search")}
+                    aria-hidden={!searchOpen}
                     name="search"
                     autoComplete="off"
+                    tabIndex={searchOpen ? 0 : -1}
                     placeholder={t("searchPlaceholder")}
                     className={`h-10 bg-transparent pr-4 text-[0.76rem] uppercase tracking-[0.16em] text-white placeholder:text-white/45 ${searchOpen ? "w-full opacity-100" : "w-0 opacity-0"}`}
                   />
@@ -116,14 +118,7 @@ export function Navbar() {
               <SearchIcon />
             </button>
 
-            <Link href="/cart" aria-label={t("cart")} className="relative flex h-10 w-10 items-center justify-center rounded-full text-white hover:bg-white/8">
-              <BagIcon />
-              {itemCount > 0 ? (
-                <span className="absolute -right-0.5 -top-0.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-white px-1 text-[0.58rem] font-semibold text-ink">
-                  {itemCount}
-                </span>
-              ) : null}
-            </Link>
+            {commerceEnabled ? <CartLink label={t("cart")} /> : null}
           </div>
         </div>
       </div>
@@ -163,5 +158,20 @@ export function Navbar() {
         </div>
       ) : null}
     </header>
+  );
+}
+
+function CartLink({ label }: { label: string }) {
+  const { itemCount } = useCart();
+
+  return (
+    <Link href="/cart" aria-label={label} className="relative flex h-10 w-10 items-center justify-center rounded-full text-white hover:bg-white/8">
+      <BagIcon />
+      {itemCount > 0 ? (
+        <span className="absolute -right-0.5 -top-0.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-white px-1 text-[0.58rem] font-semibold text-ink">
+          {itemCount}
+        </span>
+      ) : null}
+    </Link>
   );
 }

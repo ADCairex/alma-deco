@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 
+import { commerceEnabled } from "@/lib/commerce-config";
 import { formatProductPrice } from "@/lib/shop-products";
 import { useCart } from "@/store/CartContext";
 
@@ -17,9 +18,6 @@ type ProductCardProps = {
 };
 
 export function ProductCard({ id, name, price, imageUrl, category, currency = "EUR" }: ProductCardProps) {
-  const tCommon = useTranslations("common");
-  const { addItem } = useCart();
-
   return (
     <article className="group">
       <div className="relative overflow-hidden rounded-[1.6rem] bg-paper">
@@ -42,20 +40,7 @@ export function ProductCard({ id, name, price, imageUrl, category, currency = "E
             <div className="absolute inset-0 bg-gradient-to-t from-black/24 via-transparent to-transparent" />
           </Link>
 
-          <button
-            type="button"
-            onClick={() => {
-              addItem({
-                productId: id,
-                name,
-                price,
-                imageUrl,
-              });
-            }}
-            className="cart-overlay-button absolute inset-x-5 bottom-5 z-10 justify-center text-center"
-          >
-            {tCommon("addToCart")}
-          </button>
+          {commerceEnabled ? <ProductCardAddButton id={id} name={name} price={price} imageUrl={imageUrl} /> : null}
         </div>
       </div>
 
@@ -69,5 +54,27 @@ export function ProductCard({ id, name, price, imageUrl, category, currency = "E
         <p className="mt-2 text-[0.88rem] tracking-[0.06em] text-ink">{formatProductPrice(price, currency)}</p>
       </div>
     </article>
+  );
+}
+
+function ProductCardAddButton({ id, name, price, imageUrl }: Pick<ProductCardProps, "id" | "name" | "price" | "imageUrl">) {
+  const tCommon = useTranslations("common");
+  const { addItem } = useCart();
+
+  return (
+    <button
+      type="button"
+      onClick={() => {
+        addItem({
+          productId: id,
+          name,
+          price,
+          imageUrl,
+        });
+      }}
+      className="cart-overlay-button absolute inset-x-5 bottom-5 z-10 justify-center text-center"
+    >
+      {tCommon("addToCart")}
+    </button>
   );
 }

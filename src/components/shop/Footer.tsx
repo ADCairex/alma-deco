@@ -2,9 +2,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
+import { instagramHref } from "@/lib/commerce-config";
+
 const footerLogo = "/brand/alma-deco-logo-02.png";
 const comingSoonHref = "/coming-soon";
-const instagramHref = "https://www.instagram.com/almadeco.es/";
 
 function InstagramIcon() {
   return (

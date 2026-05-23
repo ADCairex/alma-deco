@@ -77,6 +77,8 @@
       "stockInStock": "En stock",
       "stockLow": "Últimas unidades",
       "stockOut": "Agotado",
+      "catalogModeDescription": "Por ahora Alma Deco funciona como catálogo. Si te interesa esta pieza, escribinos por Instagram y te contamos disponibilidad, medidas y próximos pasos.",
+      "contactInstagramButton": "Consultar por Instagram",
       "relatedBreadcrumb": "Selección Alma Deco",
       "relatedTitle": "También te puede interesar",
       "metaDescriptionFallback": "Descubre la colección editorial de Alma Deco.",
@@ -96,6 +98,14 @@
       "summaryLabel": "Resumen",
       "shippingCalculated": "Calculado en el checkout",
       "checkoutButton": "Proceder al checkout"
+    },
+    "catalogMode": {
+      "label": "Catálogo Alma Deco",
+      "pageTitle": "Catálogo Alma Deco",
+      "title": "Venta online en pausa",
+      "description": "Estamos usando la web para enseñar la colección. Si alguna pieza te interesa, escribinos por Instagram y te atendemos personalmente.",
+      "instagramButton": "Contactar por Instagram",
+      "productsButton": "Ver productos"
     },
     "checkout": {
       "editorialLabel": "Checkout",

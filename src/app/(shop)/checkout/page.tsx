@@ -1,6 +1,8 @@
 import { getTranslations } from "next-intl/server";
 
+import { CatalogModeNotice } from "@/components/shop/CatalogModeNotice";
 import { CheckoutPageClient } from "@/components/shop/CheckoutPageClient";
+import { commerceEnabled } from "@/lib/commerce-config";
 
 export async function generateMetadata() {
   const t = await getTranslations("metadata.pages");
@@ -15,5 +17,9 @@ export async function generateMetadata() {
 }
 
 export default function CheckoutPage() {
+  if (!commerceEnabled) {
+    return <CatalogModeNotice />;
+  }
+
   return <CheckoutPageClient />;
 }

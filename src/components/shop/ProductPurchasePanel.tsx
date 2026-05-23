@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 
 import { QuantitySelector } from "@/components/shop/QuantitySelector";
+import { commerceEnabled, instagramHref } from "@/lib/commerce-config";
 import { useCart } from "@/store/CartContext";
 
 type ProductPurchasePanelProps = {
@@ -15,6 +16,23 @@ type ProductPurchasePanelProps = {
 };
 
 export function ProductPurchasePanel({ productId, name, price, imageUrl, stock }: ProductPurchasePanelProps) {
+  const t = useTranslations("shop.product");
+
+  if (!commerceEnabled) {
+    return (
+      <div className="space-y-4 rounded-[1.75rem] border border-line bg-white px-6 py-6">
+        <p className="text-sm leading-7 text-ink/66">{t("catalogModeDescription")}</p>
+        <a href={instagramHref} target="_blank" rel="noopener noreferrer" className="pill-dark flex w-full">
+          {t("contactInstagramButton")}
+        </a>
+      </div>
+    );
+  }
+
+  return <AddToCartControls productId={productId} name={name} price={price} imageUrl={imageUrl} stock={stock} />;
+}
+
+function AddToCartControls({ productId, name, price, imageUrl, stock }: ProductPurchasePanelProps) {
   const tCommon = useTranslations("common");
   const [quantity, setQuantity] = useState(1);
   const { addItem } = useCart();
