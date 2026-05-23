@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 
-import { DeerLogo } from "@/components/icons/DeerLogo";
 import { useCart } from "@/store/CartContext";
 
 function SearchIcon() {
@@ -65,12 +64,8 @@ export function Navbar() {
             </button>
           </div>
 
-          <Link href="/" className="flex items-center gap-3 text-white">
-            <DeerLogo className="h-11 w-11 sm:h-12 sm:w-12" color="currentColor" />
-            <div className="flex flex-col leading-none">
-              <span className="font-display text-[0.95rem] uppercase tracking-[0.42em] sm:text-[1.05rem]">Alma Deco</span>
-              <span className="mt-1 text-[0.56rem] uppercase tracking-[0.34em] text-white/62">Rustic Living</span>
-            </div>
+          <Link href="/" className="flex items-center text-white" aria-label="Alma Deco home">
+            <span className="font-display text-[0.95rem] uppercase tracking-[0.42em] sm:text-[1.05rem]">Alma Deco</span>
           </Link>
 
           <nav className="hidden flex-1 items-center justify-center gap-5 lg:flex xl:gap-7">
