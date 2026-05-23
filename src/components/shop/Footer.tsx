@@ -1,7 +1,10 @@
+import Image from "next/image";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
-import { DeerLogo } from "@/components/icons/DeerLogo";
+const footerLogo = "/brand/alma-deco-logo-02.png";
+const comingSoonHref = "/coming-soon";
+const instagramHref = "https://www.instagram.com/almadeco.es/";
 
 function InstagramIcon() {
   return (
@@ -13,36 +16,29 @@ function InstagramIcon() {
   );
 }
 
-function TikTokIcon() {
-  return (
-    <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4 fill-none stroke-current stroke-[1.7]">
-      <path d="M14 4v9.25a3.75 3.75 0 1 1-3.05-3.69" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M14 4c0.98 1.97 2.61 3.64 5 4.1v2.72c-2.13 0-3.84-.53-5-1.34" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
 export async function Footer() {
   const t = await getTranslations("shop.footer");
 
   return (
     <footer className="bg-bg-dark text-white">
-      <div className="site-container grid gap-12 py-16 text-center md:grid-cols-2 md:text-left lg:grid-cols-[1.2fr_1fr_0.8fr_1fr] lg:gap-10 lg:py-20">
-        <div className="space-y-6">
-          <div className="mx-auto w-fit space-y-4 md:mx-0">
-            <div className="flex items-center justify-center gap-4 md:justify-start">
-              <DeerLogo className="h-16 w-16" color="currentColor" />
-              <div className="thin-frame-inverse inline-flex items-center justify-center px-5 py-3">
-                <span className="font-display text-lg uppercase tracking-[0.34em]">{t("brandName")}</span>
-              </div>
-            </div>
-            <p className="max-w-xs text-[0.82rem] leading-6 text-white/66">
+      <div className="site-container grid items-center justify-items-center gap-12 py-16 text-center md:grid-cols-2 lg:grid-cols-[1.2fr_1fr_0.8fr_1fr] lg:gap-10 lg:py-20">
+        <div className="flex h-full w-full flex-col items-center justify-center space-y-6">
+          <div className="mx-auto flex max-w-xs flex-col items-center space-y-3">
+            <Image
+              src={footerLogo}
+              alt={t("brandLogoAlt")}
+              width={3508}
+              height={2481}
+              className="mx-auto h-auto w-40 object-contain brightness-0 invert sm:w-[10.5rem]"
+              sizes="(min-width: 640px) 168px, 160px"
+            />
+            <p className="text-sm leading-6 text-white/68">
               {t("tagline")}
             </p>
           </div>
         </div>
 
-        <div className="space-y-4 text-[0.82rem] text-white/82">
+        <div className="flex h-full w-full flex-col items-center justify-center space-y-4 text-center text-sm text-white/82">
           <Link href="/legal/terminos" className="block hover:opacity-70">
             {t("legalTerms")}
           </Link>
@@ -57,14 +53,16 @@ export async function Footer() {
           </Link>
         </div>
 
-        <div className="space-y-1 text-[0.82rem] uppercase tracking-[0.18em] text-white/88">
-          <p>{t("discoverLabel")}</p>
-          <p>{t("discoverBrand")}</p>
-          <p>{t("discoverSuffix")}</p>
+        <div className="flex h-full w-full flex-col items-center justify-center text-center text-sm uppercase tracking-[0.18em] text-white/88">
+          <Link href={comingSoonHref} target="_blank" rel="noopener noreferrer" className="block space-y-1 text-center hover:opacity-70">
+            <span className="block">{t("discoverLabel")}</span>
+            <span className="block">{t("discoverBrand")}</span>
+            <span className="block">{t("discoverSuffix")}</span>
+          </Link>
         </div>
 
-        <div className="space-y-5 text-[0.82rem] text-white/82">
-          <p className="text-[0.8rem] font-semibold uppercase tracking-[0.24em] text-white">{t("contactTitle")}</p>
+        <div className="flex h-full w-full flex-col items-center justify-center space-y-5 text-center text-sm text-white/82">
+          <p className="text-[0.82rem] font-semibold uppercase tracking-[0.24em] text-white">{t("contactTitle")}</p>
           <a href={`mailto:${t("contactEmail")}`} className="block hover:opacity-70">
             {t("contactEmail")}
           </a>
@@ -72,12 +70,9 @@ export async function Footer() {
             <p>{t("socialCta1")}</p>
             <p>{t("socialCta2")}</p>
           </div>
-          <div className="flex items-center justify-center gap-3 text-white md:justify-start">
-            <a href="#" aria-label={t("socialInstagram")} className="thin-frame-inverse rounded-full p-2.5 hover:bg-white hover:text-ink">
+          <div className="flex items-center justify-center gap-3 text-white">
+            <a href={instagramHref} target="_blank" rel="noopener noreferrer" aria-label={t("socialInstagram")} className="thin-frame-inverse rounded-full p-2.5 hover:bg-white hover:text-ink">
               <InstagramIcon />
-            </a>
-            <a href="#" aria-label={t("socialTikTok")} className="thin-frame-inverse rounded-full p-2.5 hover:bg-white hover:text-ink">
-              <TikTokIcon />
             </a>
           </div>
         </div>
