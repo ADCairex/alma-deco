@@ -64,8 +64,8 @@ export function Navbar() {
             </button>
           </div>
 
-          <Link href="/" className="flex items-center text-white" aria-label="Alma Deco home">
-            <span className="font-display text-[0.95rem] uppercase tracking-[0.42em] sm:text-[1.05rem]">Alma Deco</span>
+          <Link href="/" className="flex shrink-0 items-center text-white" aria-label="Alma Deco home">
+            <img src="/brand/alma-deco-logo-02.svg" alt="Alma Deco" className="h-14 w-auto sm:h-16 lg:h-20" />
           </Link>
 
           <nav className="hidden flex-1 items-center justify-center gap-5 lg:flex xl:gap-7">

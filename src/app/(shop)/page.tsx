@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 
-import { DeerLogo } from "@/components/icons/DeerLogo";
 import { Hero } from "@/components/shop/Hero";
 import { ProductCard } from "@/components/shop/ProductCard";
 import { prisma } from "@/lib/prisma";
@@ -113,13 +112,14 @@ export default async function HomePage() {
       <section className="bg-paper py-0">
         <div className="site-container grid gap-0 lg:grid-cols-[0.94fr_1.06fr] lg:items-stretch">
           <div className="flex flex-col justify-center bg-bg-dark px-8 py-14 text-white sm:px-12 lg:px-16 lg:py-16">
-            <div className="mb-10 flex flex-col items-center lg:items-start">
-              <div className="flex items-center gap-4">
-                <DeerLogo className="h-[72px] w-[72px] text-white" color="currentColor" />
-                <div className="thin-frame-inverse inline-flex items-center justify-center px-6 py-3">
-                  <span className="font-display text-lg uppercase tracking-[0.34em] text-white">Alma Deco</span>
-                </div>
-              </div>
+            <div className="mb-10 flex justify-center">
+              <Image
+                src="/brand/alma-deco-logo-01.svg"
+                alt="Alma Deco"
+                width={3508}
+                height={2481}
+                className="h-auto w-full max-w-[250px] object-contain sm:max-w-[300px] lg:max-w-[330px]"
+              />
             </div>
 
             <blockquote className="font-display text-[1.55rem] leading-[1.45] text-white italic sm:text-[1.85rem]">
