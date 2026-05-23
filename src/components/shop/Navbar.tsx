@@ -83,7 +83,7 @@ export function Navbar() {
           <div className="flex items-center gap-2.5 sm:gap-3.5">
             <div className="hidden items-center lg:flex">
               <div
-                className={`overflow-hidden rounded-full border border-white/18 bg-white/4 transition-all duration-300 ${searchOpen ? "w-56 opacity-100" : "w-10 opacity-90"}`}
+                className={`overflow-hidden rounded-full border border-white/18 bg-white/4 transition-[width,opacity,border-color,background-color] duration-300 ${searchOpen ? "w-56 opacity-100" : "w-10 opacity-90"}`}
               >
                 <div className="flex items-center">
                   <button
@@ -97,8 +97,11 @@ export function Navbar() {
                   </button>
                   <input
                     type="search"
+                    aria-label={t("search")}
+                    name="search"
+                    autoComplete="off"
                     placeholder={t("searchPlaceholder")}
-                    className={`h-10 bg-transparent pr-4 text-[0.76rem] uppercase tracking-[0.16em] text-white placeholder:text-white/45 focus:outline-none ${searchOpen ? "w-full opacity-100" : "w-0 opacity-0"}`}
+                    className={`h-10 bg-transparent pr-4 text-[0.76rem] uppercase tracking-[0.16em] text-white placeholder:text-white/45 ${searchOpen ? "w-full opacity-100" : "w-0 opacity-0"}`}
                   />
                 </div>
               </div>
@@ -132,8 +135,11 @@ export function Navbar() {
               <SearchIcon />
               <input
                 type="search"
+                aria-label={t("searchProductsPlaceholder")}
+                name="search"
+                autoComplete="off"
                 placeholder={t("searchProductsPlaceholder")}
-                className="h-11 w-full bg-transparent px-3 text-[0.76rem] uppercase tracking-[0.16em] text-white placeholder:text-white/45 focus:outline-none"
+                className="h-11 w-full bg-transparent px-3 text-[0.76rem] uppercase tracking-[0.16em] text-white placeholder:text-white/45"
               />
             </div>
           </div>

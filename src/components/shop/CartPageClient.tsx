@@ -81,7 +81,7 @@ export function CartPageClient() {
               return (
                 <article
                   key={item.productId}
-                  className={`rounded-[1.9rem] border border-line bg-white p-4 transition-all duration-200 sm:p-5 ${
+                  className={`rounded-[1.9rem] border border-line bg-white p-4 transition-[opacity,transform,border-color,background-color] duration-200 sm:p-5 ${
                     isRemoving ? "translate-y-2 opacity-0" : "translate-y-0 opacity-100"
                   }`}
                 >
@@ -106,7 +106,7 @@ export function CartPageClient() {
                         <button
                           type="button"
                           onClick={() => handleRemove(item.productId)}
-                          className="self-center rounded-full border border-ink/12 px-4 py-2 text-[0.7rem] uppercase tracking-[0.18em] text-ink/64 hover:border-ink/28 hover:text-ink sm:self-start"
+                          className="self-center rounded-full border border-ink/12 px-4 py-2 text-[0.7rem] uppercase tracking-[0.18em] text-ink/64 hover:border-ink hover:bg-ink hover:text-white sm:self-start"
                           aria-label={t("removeItemAriaLabel", { name: item.name })}
                         >
                           {t("removeButton")}

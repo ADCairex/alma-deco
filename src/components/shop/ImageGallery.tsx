@@ -58,7 +58,7 @@ export function ImageGallery({ mainImage, images, productName }: ImageGalleryPro
                 type="button"
                 onClick={() => setSelectedImage(image)}
                 className={`relative h-24 w-20 shrink-0 overflow-hidden rounded-[1.2rem] border bg-stone-100 transition sm:h-28 sm:w-24 ${
-                  isSelected ? "border-ink shadow-[0_0_0_1px_rgba(26,26,26,0.3)]" : "border-transparent opacity-75 hover:opacity-100"
+                  isSelected ? "border-ink shadow-[0_0_0_1px_rgba(26,26,26,0.3)]" : "border-transparent opacity-75 hover:border-ink/45 hover:opacity-100"
                 }`}
                 aria-label={`Ver imagen ${index + 1} de ${productName}`}
                 aria-pressed={isSelected}

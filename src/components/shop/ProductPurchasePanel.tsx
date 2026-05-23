@@ -40,7 +40,7 @@ export function ProductPurchasePanel({ productId, name, price, imageUrl, stock }
             quantity,
           );
         }}
-        className="inline-flex w-full items-center justify-center rounded-full bg-ink px-6 py-4 text-[0.78rem] font-medium uppercase tracking-[0.22em] text-white hover:scale-[1.01] hover:bg-ink/92 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:scale-100"
+        className="inline-flex w-full items-center justify-center rounded-full bg-ink px-6 py-4 text-[0.78rem] font-medium uppercase tracking-[0.22em] text-white hover:scale-[1.01] hover:bg-ink/92 hover:text-white disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:scale-100"
       >
         {tCommon("addToCart")}
       </button>

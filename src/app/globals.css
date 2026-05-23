@@ -92,6 +92,15 @@ button {
   font: inherit;
 }
 
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--clay);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 4px rgba(196, 149, 106, 0.22);
+}
+
 ::selection {
   background: rgba(26, 26, 26, 0.14);
 }
@@ -142,6 +151,7 @@ button {
 .pill-dark:hover {
   transform: scale(1.02);
   filter: brightness(1.08);
+  color: var(--paper);
 }
 
 .pill-light-outline {
@@ -181,6 +191,7 @@ button {
 
 .cart-overlay-button:hover {
   background: rgba(26, 26, 26, 1);
+  color: var(--paper);
 }
 
 .text-shadow-hero {

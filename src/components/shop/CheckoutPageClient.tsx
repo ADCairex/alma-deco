@@ -70,18 +70,19 @@ function PaymentCard({
   return (
     <button
       type="button"
+      aria-pressed={selected}
       onClick={onClick}
-      className={`flex w-full items-center justify-between rounded-[1.5rem] border px-5 py-4 text-left ${
-        selected ? "border-ink bg-ink text-white" : "border-line bg-white text-ink hover:border-ink/30"
+      className={`group flex w-full items-center justify-between rounded-[1.5rem] border px-5 py-4 text-left ${
+        selected ? "border-ink bg-ink text-white" : "border-line bg-white text-ink hover:border-ink hover:bg-ink hover:text-white"
       }`}
     >
       <div>
         <p className="text-sm font-medium uppercase tracking-[0.14em]">{title}</p>
-        <p className={`mt-2 text-sm ${selected ? "text-white/74" : "text-ink/58"}`}>{subtitle}</p>
+        <p className={`mt-2 text-sm ${selected ? "text-white/74" : "text-ink/58 group-hover:text-white/78"}`}>{subtitle}</p>
       </div>
       <span
         className={`rounded-full px-3 py-1 text-[0.66rem] font-semibold uppercase tracking-[0.18em] ${
-          selected ? "bg-white text-ink" : "bg-stone-50 text-ink/58"
+          selected ? "bg-white text-ink" : "bg-stone-50 text-ink/58 group-hover:bg-white group-hover:text-ink"
         }`}
       >
         {badge}
@@ -305,11 +306,13 @@ export function CheckoutPageClient() {
                 <span className="text-[0.72rem] uppercase tracking-[0.2em] text-ink/50">{t("fieldName")}</span>
                 <input
                   type="text"
+                  name="name"
+                  autoComplete="name"
                   required
                   value={formValues.name}
                   onChange={(event) => handleFieldChange("name", event.target.value)}
                   placeholder={t("fieldNamePlaceholder")}
-                  className="w-full rounded-[1.2rem] border border-ink/12 bg-stone-50 px-4 py-3.5 text-sm text-ink outline-none focus:border-ink/28"
+                  className="w-full rounded-[1.2rem] border border-ink/12 bg-stone-50 px-4 py-3.5 text-sm text-ink focus:border-ink/28 focus-visible:border-ink/40"
                 />
                 {errors.name ? <p className="text-sm text-red-600">{errors.name}</p> : null}
               </label>
@@ -318,11 +321,14 @@ export function CheckoutPageClient() {
                 <span className="text-[0.72rem] uppercase tracking-[0.2em] text-ink/50">{t("fieldEmail")}</span>
                 <input
                   type="email"
+                  name="email"
+                  autoComplete="email"
+                  spellCheck={false}
                   required
                   value={formValues.email}
                   onChange={(event) => handleFieldChange("email", event.target.value)}
                   placeholder={t("fieldEmailPlaceholder")}
-                  className="w-full rounded-[1.2rem] border border-ink/12 bg-stone-50 px-4 py-3.5 text-sm text-ink outline-none focus:border-ink/28"
+                  className="w-full rounded-[1.2rem] border border-ink/12 bg-stone-50 px-4 py-3.5 text-sm text-ink focus:border-ink/28 focus-visible:border-ink/40"
                 />
                 {errors.email ? <p className="text-sm text-red-600">{errors.email}</p> : null}
               </label>
@@ -331,11 +337,13 @@ export function CheckoutPageClient() {
                 <span className="text-[0.72rem] uppercase tracking-[0.2em] text-ink/50">{t("fieldAddress")}</span>
                 <input
                   type="text"
+                  name="address"
+                  autoComplete="street-address"
                   required
                   value={formValues.address}
                   onChange={(event) => handleFieldChange("address", event.target.value)}
                   placeholder={t("fieldAddressPlaceholder")}
-                  className="w-full rounded-[1.2rem] border border-ink/12 bg-stone-50 px-4 py-3.5 text-sm text-ink outline-none focus:border-ink/28"
+                  className="w-full rounded-[1.2rem] border border-ink/12 bg-stone-50 px-4 py-3.5 text-sm text-ink focus:border-ink/28 focus-visible:border-ink/40"
                 />
                 {errors.address ? <p className="text-sm text-red-600">{errors.address}</p> : null}
               </label>
@@ -344,11 +352,13 @@ export function CheckoutPageClient() {
                 <span className="text-[0.72rem] uppercase tracking-[0.2em] text-ink/50">{t("fieldCity")}</span>
                 <input
                   type="text"
+                  name="city"
+                  autoComplete="address-level2"
                   required
                   value={formValues.city}
                   onChange={(event) => handleFieldChange("city", event.target.value)}
                   placeholder={t("fieldCityPlaceholder")}
-                  className="w-full rounded-[1.2rem] border border-ink/12 bg-stone-50 px-4 py-3.5 text-sm text-ink outline-none focus:border-ink/28"
+                  className="w-full rounded-[1.2rem] border border-ink/12 bg-stone-50 px-4 py-3.5 text-sm text-ink focus:border-ink/28 focus-visible:border-ink/40"
                 />
                 {errors.city ? <p className="text-sm text-red-600">{errors.city}</p> : null}
               </label>
@@ -357,11 +367,14 @@ export function CheckoutPageClient() {
                 <span className="text-[0.72rem] uppercase tracking-[0.2em] text-ink/50">{t("fieldPostalCode")}</span>
                 <input
                   type="text"
+                  name="postal-code"
+                  autoComplete="postal-code"
+                  inputMode="numeric"
                   required
                   value={formValues.postalCode}
                   onChange={(event) => handleFieldChange("postalCode", event.target.value)}
                   placeholder={t("fieldPostalCodePlaceholder")}
-                  className="w-full rounded-[1.2rem] border border-ink/12 bg-stone-50 px-4 py-3.5 text-sm text-ink outline-none focus:border-ink/28"
+                  className="w-full rounded-[1.2rem] border border-ink/12 bg-stone-50 px-4 py-3.5 text-sm text-ink focus:border-ink/28 focus-visible:border-ink/40"
                 />
                 {errors.postalCode ? <p className="text-sm text-red-600">{errors.postalCode}</p> : null}
               </label>
@@ -369,10 +382,12 @@ export function CheckoutPageClient() {
               <label className="space-y-2 sm:col-span-2">
                 <span className="text-[0.72rem] uppercase tracking-[0.2em] text-ink/50">{t("fieldCountry")}</span>
                 <select
+                  name="country"
+                  autoComplete="country-name"
                   value={formValues.country}
                   required
                   onChange={(event) => handleFieldChange("country", event.target.value)}
-                  className="w-full rounded-[1.2rem] border border-ink/12 bg-stone-50 px-4 py-3.5 text-sm text-ink outline-none focus:border-ink/28"
+                  className="w-full rounded-[1.2rem] border border-ink/12 bg-stone-50 px-4 py-3.5 text-sm text-ink focus:border-ink/28 focus-visible:border-ink/40"
                 >
                   {COUNTRY_KEYS.map((key) => (
                     <option key={key} value={t(key)}>
@@ -458,10 +473,10 @@ export function CheckoutPageClient() {
                   });
                 }}
               />
-              {errors.paymentMethod ? <p className="text-sm text-red-600">{errors.paymentMethod}</p> : null}
+              {errors.paymentMethod ? <p className="text-sm text-red-600" aria-live="polite">{errors.paymentMethod}</p> : null}
             </div>
 
-            {submitError || errors.cart ? <p className="mt-5 text-sm text-red-600">{submitError ?? errors.cart}</p> : null}
+            {submitError || errors.cart ? <p className="mt-5 text-sm text-red-600" aria-live="polite">{submitError ?? errors.cart}</p> : null}
 
             <button type="submit" disabled={!isFormValid || isSubmitting} className="pill-dark mt-8 flex w-full disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:scale-100">
               {isSubmitting ? t("submitButtonLoading") : t("submitButton")}

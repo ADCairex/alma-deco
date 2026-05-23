@@ -17,7 +17,7 @@ export function QuantitySelector({ value, onChange, max }: QuantitySelectorProps
         type="button"
         onClick={() => onChange(Math.max(1, value - 1))}
         disabled={isMin}
-        className="flex h-10 w-10 items-center justify-center rounded-full text-lg text-ink transition hover:bg-stone-50 disabled:cursor-not-allowed disabled:opacity-35"
+        className="flex h-10 w-10 items-center justify-center rounded-full text-lg text-ink transition hover:bg-ink hover:text-white disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:bg-transparent disabled:hover:text-ink"
         aria-label="Reducir cantidad"
       >
         −
@@ -29,7 +29,7 @@ export function QuantitySelector({ value, onChange, max }: QuantitySelectorProps
         type="button"
         onClick={() => onChange(Math.min(safeMax, value + 1))}
         disabled={isMax}
-        className="flex h-10 w-10 items-center justify-center rounded-full text-lg text-ink transition hover:bg-stone-50 disabled:cursor-not-allowed disabled:opacity-35"
+        className="flex h-10 w-10 items-center justify-center rounded-full text-lg text-ink transition hover:bg-ink hover:text-white disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:bg-transparent disabled:hover:text-ink"
         aria-label="Aumentar cantidad"
       >
         +

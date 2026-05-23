@@ -22,9 +22,9 @@ export function ProductCard({ id, name, price, imageUrl, category, currency = "E
 
   return (
     <article className="group">
-      <Link href={`/products/${id}`} className="block">
-        <div className="relative overflow-hidden rounded-[1.6rem] bg-paper">
-          <div className="relative aspect-[3/4] overflow-hidden bg-stone-100">
+      <div className="relative overflow-hidden rounded-[1.6rem] bg-paper">
+        <div className="relative aspect-[3/4] overflow-hidden bg-stone-100">
+          <Link href={`/products/${id}`} className="block h-full focus-visible:outline-offset-[-3px]">
             {imageUrl ? (
               <Image
                 src={imageUrl}
@@ -40,32 +40,34 @@ export function ProductCard({ id, name, price, imageUrl, category, currency = "E
             )}
 
             <div className="absolute inset-0 bg-gradient-to-t from-black/24 via-transparent to-transparent" />
+          </Link>
 
-            <button
-              type="button"
-              onClick={(event) => {
-                event.preventDefault();
-                event.stopPropagation();
-                addItem({
-                  productId: id,
-                  name,
-                  price,
-                  imageUrl,
-                });
-              }}
-              className="cart-overlay-button absolute inset-x-5 bottom-5 z-10 justify-center text-center"
-            >
-              {tCommon("addToCart")}
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={() => {
+              addItem({
+                productId: id,
+                name,
+                price,
+                imageUrl,
+              });
+            }}
+            className="cart-overlay-button absolute inset-x-5 bottom-5 z-10 justify-center text-center"
+          >
+            {tCommon("addToCart")}
+          </button>
         </div>
+      </div>
 
-        <div className="pt-5 text-center">
-          <p className="editorial-label text-ink/45">{category}</p>
-          <h3 className="mt-3 text-[0.82rem] font-medium uppercase tracking-[0.24em] text-ink">{name}</h3>
-          <p className="mt-2 text-[0.88rem] tracking-[0.06em] text-ink">{formatProductPrice(price, currency)}</p>
-        </div>
-      </Link>
+      <div className="pt-5 text-center">
+        <p className="editorial-label text-ink/45">{category}</p>
+        <h3 className="mt-3">
+          <Link href={`/products/${id}`} className="text-[0.82rem] font-medium uppercase tracking-[0.24em] text-ink hover:text-ink/72">
+            {name}
+          </Link>
+        </h3>
+        <p className="mt-2 text-[0.88rem] tracking-[0.06em] text-ink">{formatProductPrice(price, currency)}</p>
+      </div>
     </article>
   );
 }

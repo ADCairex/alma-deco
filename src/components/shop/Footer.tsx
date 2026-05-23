@@ -39,22 +39,22 @@ export async function Footer() {
         </div>
 
         <div className="flex h-full w-full flex-col items-center justify-center space-y-4 text-center text-sm text-white/82">
-          <Link href="/legal/terminos" className="block hover:opacity-70">
+          <Link href="/legal/terminos" className="block hover:text-white">
             {t("legalTerms")}
           </Link>
-          <Link href="/legal/privacidad" className="block hover:opacity-70">
+          <Link href="/legal/privacidad" className="block hover:text-white">
             {t("legalPrivacy")}
           </Link>
-          <Link href="/legal/cookies" className="block hover:opacity-70">
+          <Link href="/legal/cookies" className="block hover:text-white">
             {t("legalCookies")}
           </Link>
-          <Link href="#" className="block hover:opacity-70">
+          <Link href="#" className="block hover:text-white">
             {t("cookieSettings")}
           </Link>
         </div>
 
         <div className="flex h-full w-full flex-col items-center justify-center text-center text-sm uppercase tracking-[0.18em] text-white/88">
-          <Link href={comingSoonHref} target="_blank" rel="noopener noreferrer" className="block space-y-1 text-center hover:opacity-70">
+          <Link href={comingSoonHref} target="_blank" rel="noopener noreferrer" className="block space-y-1 text-center hover:text-white">
             <span className="block">{t("discoverLabel")}</span>
             <span className="block">{t("discoverBrand")}</span>
             <span className="block">{t("discoverSuffix")}</span>
@@ -63,7 +63,7 @@ export async function Footer() {
 
         <div className="flex h-full w-full flex-col items-center justify-center space-y-5 text-center text-sm text-white/82">
           <p className="text-[0.82rem] font-semibold uppercase tracking-[0.24em] text-white">{t("contactTitle")}</p>
-          <a href={`mailto:${t("contactEmail")}`} className="block hover:opacity-70">
+          <a href={`mailto:${t("contactEmail")}`} className="block hover:text-white">
             {t("contactEmail")}
           </a>
           <div className="space-y-1 leading-6">
