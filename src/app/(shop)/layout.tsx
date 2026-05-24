@@ -6,6 +6,8 @@ import { Navbar } from "@/components/shop/Navbar";
 import { prisma } from "@/lib/prisma";
 import { buildPublicCollectionOptions } from "@/lib/shop-products";
 
+export const dynamic = "force-dynamic";
+
 export default async function ShopLayout({ children }: { children: ReactNode }) {
   const collections = await prisma.collection.findMany({ orderBy: { name: "asc" } });
 
