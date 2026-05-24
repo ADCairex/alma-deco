@@ -11,8 +11,17 @@ export function AdminSidebar() {
   const links = [
     { href: "/admin", label: t("dashboard") },
     { href: "/admin/products", label: t("products") },
+    { href: "/admin/taxonomy", label: t("taxonomy") },
     { href: "/admin/orders", label: t("orders") },
   ];
+
+  function isActiveLink(href: string) {
+    if (href === "/admin") {
+      return pathname === href;
+    }
+
+    return pathname === href || pathname.startsWith(`${href}/`);
+  }
 
   return (
     <aside className="flex min-h-screen w-full max-w-64 flex-col border-r border-zinc-200 bg-zinc-50 px-5 py-8">
@@ -27,7 +36,7 @@ export function AdminSidebar() {
             key={link.href}
             href={link.href}
             className={`block rounded-2xl px-4 py-3 text-sm font-medium transition ${
-              pathname === link.href
+              isActiveLink(link.href)
                 ? "bg-white text-zinc-950 shadow-sm"
                 : "text-zinc-700 hover:bg-white hover:text-zinc-950"
             }`}

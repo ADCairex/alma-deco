@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 
 import { commerceEnabled } from "@/lib/commerce-config";
+import type { PublicTaxonomyOption } from "@/lib/shop-products";
 import { useCart } from "@/store/CartContext";
 
 function SearchIcon() {
@@ -33,20 +34,16 @@ function MenuIcon({ open }: { open: boolean }) {
   );
 }
 
-export function Navbar() {
+type NavbarProps = {
+  collections?: PublicTaxonomyOption[];
+};
+
+export function Navbar({ collections = [] }: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const t = useTranslations("shop.nav");
 
-  const navLinks = [
-    { href: "/products?tag=rebajas", label: t("links.rebajas") },
-    { href: "/products?nueva=1", label: t("links.nuevaColeccion"), featured: true },
-    { href: "/products?coleccion=origenes", label: t("links.coleccionOrigenes") },
-    { href: "/products?categoria=cocina", label: t("links.cocina") },
-    { href: "/products?categoria=decoracion", label: t("links.decoracion") },
-    { href: "/products?categoria=oficina", label: t("links.oficina") },
-    { href: "/products?temporada=verano-deco", label: t("links.veranoDeco") },
-  ];
+  const navLinks = collections.map((collection) => ({ href: `/products?coleccion=${collection.slug}`, label: collection.name }));
 
   return (
     <header className="sticky top-0 z-50 bg-bg-dark text-white">
@@ -73,7 +70,7 @@ export function Navbar() {
               <Link
                 key={link.label}
                 href={link.href}
-                className={`text-[0.81rem] uppercase tracking-[0.18em] text-white/88 hover:text-white ${link.featured ? "font-semibold" : "font-normal"}`}
+                className="text-[0.81rem] font-normal uppercase tracking-[0.18em] text-white/88 hover:text-white"
               >
                 {link.label}
               </Link>
@@ -149,7 +146,7 @@ export function Navbar() {
                 key={link.label}
                 href={link.href}
                 onClick={() => setIsOpen(false)}
-                className={`w-fit text-[0.82rem] uppercase tracking-[0.18em] text-white/88 hover:text-white ${link.featured ? "font-semibold" : "font-normal"}`}
+                className="w-fit text-[0.82rem] font-normal uppercase tracking-[0.18em] text-white/88 hover:text-white"
               >
                 {link.label}
               </Link>

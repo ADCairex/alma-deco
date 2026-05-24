@@ -4,15 +4,24 @@ import { getTranslations } from "next-intl/server";
 
 import { ProductCard } from "@/components/shop/ProductCard";
 import { ProductsFilterBar } from "@/components/shop/ProductsFilterBar";
-import { PRODUCT_CATEGORIES } from "@/lib/admin-products";
 import { prisma } from "@/lib/prisma";
-import { buildPublicProductsOrderBy, buildPublicProductsWhere, formatPublicProduct, normalizePublicProductQuery } from "@/lib/shop-products";
+import {
+  buildPublicCategoryOptions,
+  buildPublicCollectionOptions,
+  buildPublicProductsOrderBy,
+  buildPublicProductsWhere,
+  formatPublicProduct,
+  normalizePublicProductQuery,
+  PUBLIC_PRODUCT_INCLUDE,
+} from "@/lib/shop-products";
 import type { Product } from "@/types";
 
 type ProductsPageProps = {
   searchParams: Promise<{
     category?: string | string[];
     categoria?: string | string[];
+    collection?: string | string[];
+    coleccion?: string | string[];
     featured?: string | string[];
     nueva?: string | string[];
     search?: string | string[];
@@ -42,17 +51,26 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
   const filters = normalizePublicProductQuery(resolvedSearchParams);
 
   const sortLabels = {
-    newest: t("sortNewest"),
     price_asc: t("sortPriceAsc"),
     price_desc: t("sortPriceDesc"),
   } as const;
 
-  const products = await prisma.product.findMany({
-    where: buildPublicProductsWhere(filters),
-    orderBy: buildPublicProductsOrderBy(filters.sort),
-  });
+  const [products, categories, collections] = await Promise.all([
+    prisma.product.findMany({
+      where: buildPublicProductsWhere(filters),
+      include: PUBLIC_PRODUCT_INCLUDE,
+      orderBy: buildPublicProductsOrderBy(filters.sort),
+    }),
+    prisma.category.findMany({ orderBy: { name: "asc" } }),
+    prisma.collection.findMany({ orderBy: { name: "asc" } }),
+  ]);
 
   const normalizedProducts: Product[] = products.map(formatPublicProduct);
+  const categoryOptions = buildPublicCategoryOptions(categories);
+  const collectionOptions = buildPublicCollectionOptions(collections);
+  const activeCategoryLabel = categoryOptions.find((category) => category.slug === filters.category)?.name;
+  const activeCollectionLabel = collectionOptions.find((collection) => collection.slug === filters.collection)?.name;
+  const activeSortLabel = filters.sort === "newest" ? null : sortLabels[filters.sort];
 
   return (
     <>
@@ -83,22 +101,41 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
         <div className="site-container space-y-8">
           <div className="flex flex-col gap-5 border-b border-line pb-7 lg:flex-row lg:items-end lg:justify-between">
             <div className="space-y-4">
-              <ProductsFilterBar categories={PRODUCT_CATEGORIES} activeCategory={filters.category} />
+              <ProductsFilterBar
+                categories={categoryOptions}
+                activeCategory={filters.category}
+              />
 
               <div className="flex flex-wrap gap-3 text-[0.75rem] uppercase tracking-[0.18em] text-ink/52">
                 <span>{t("count", { count: normalizedProducts.length })}</span>
-                <span>•</span>
-                <span>{sortLabels[filters.sort]}</span>
+                {activeSortLabel ? (
+                  <>
+                    <span>•</span>
+                    <span>{activeSortLabel}</span>
+                  </>
+                ) : null}
                 {filters.featured ? (
                   <>
                     <span>•</span>
                     <span>{t("featured")}</span>
                   </>
                 ) : null}
+                {activeCategoryLabel ? (
+                  <>
+                    <span>•</span>
+                    <span>{activeCategoryLabel}</span>
+                  </>
+                ) : null}
                 {filters.search ? (
                   <>
                     <span>•</span>
                     <span>{t("searchLabel", { term: filters.search })}</span>
+                  </>
+                ) : null}
+                {activeCollectionLabel ? (
+                  <>
+                    <span>•</span>
+                    <span>{activeCollectionLabel}</span>
                   </>
                 ) : null}
               </div>

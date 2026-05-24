@@ -7,9 +7,9 @@ import { useTranslations } from "next-intl";
 
 import {
   DEFAULT_PRODUCT_FORM_VALUES,
-  PRODUCT_CATEGORIES,
   type ProductFormValues,
 } from "@/lib/admin-products";
+import type { TaxonomyDto } from "@/lib/taxonomy";
 import type { Product } from "@/types";
 
 import { ImageUploader } from "./ImageUploader";
@@ -17,6 +17,8 @@ import { ImageUploader } from "./ImageUploader";
 type ProductFormProps = {
   open: boolean;
   product: Product | null;
+  categories: TaxonomyDto[];
+  collections: TaxonomyDto[];
   onClose: () => void;
   onSuccess: () => Promise<void> | void;
 };
@@ -32,7 +34,9 @@ function getInitialValues(product: Product | null): ProductFormValues {
     name: product.name,
     description: product.description ?? "",
     price: String(product.price),
-    category: product.category,
+    category: product.categoryId ? product.category : "",
+    categoryId: product.categoryId ?? null,
+    collectionId: product.collectionId ?? null,
     stock: String(product.stock),
     imageUrl: product.imageUrl ?? "",
     images: product.images,
@@ -40,7 +44,7 @@ function getInitialValues(product: Product | null): ProductFormValues {
   };
 }
 
-export function ProductForm({ open, product, onClose, onSuccess }: ProductFormProps) {
+export function ProductForm({ open, product, categories, collections, onClose, onSuccess }: ProductFormProps) {
   const [values, setValues] = useState<ProductFormValues>(DEFAULT_PRODUCT_FORM_VALUES);
   const [errors, setErrors] = useState<FormErrors>({});
   const [formError, setFormError] = useState<string | null>(null);
@@ -81,10 +85,6 @@ export function ProductForm({ open, product, onClose, onSuccess }: ProductFormPr
       nextErrors.price = t("errorPriceInvalid");
     }
 
-    if (!values.category.trim()) {
-      nextErrors.category = t("errorCategoryRequired");
-    }
-
     if (values.stock.trim() && (Number(values.stock) < 0 || Number.isNaN(Number(values.stock)))) {
       nextErrors.stock = t("errorStockInvalid");
     }
@@ -117,6 +117,8 @@ export function ProductForm({ open, product, onClose, onSuccess }: ProductFormPr
           description: values.description,
           price: Number(values.price),
           category: values.category,
+          categoryId: values.categoryId ?? null,
+          collectionId: values.collectionId ?? null,
           stock: values.stock ? Number(values.stock) : 0,
           imageUrl: values.imageUrl,
           images: JSON.stringify(values.images),
@@ -216,21 +218,28 @@ export function ProductForm({ open, product, onClose, onSuccess }: ProductFormPr
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor="category" className="text-sm font-medium text-zinc-900">
+                  <label htmlFor="categoryId" className="text-sm font-medium text-zinc-900">
                     {t("fieldCategory")}
                   </label>
                   <select
-                    id="category"
-                    value={values.category}
-                    onChange={(event) => updateField("category", event.target.value)}
+                    id="categoryId"
+                    value={values.categoryId ?? ""}
+                    onChange={(event) => {
+                      const categoryId = event.target.value || null;
+                      const selectedCategory = categories.find((category) => category.id === categoryId);
+                      updateField("categoryId", categoryId);
+                      updateField("category", selectedCategory?.name ?? "");
+                    }}
                     className="w-full rounded-2xl border border-zinc-300 bg-white px-4 py-3 text-sm text-zinc-950 outline-none transition focus:border-zinc-500 focus:ring-2 focus:ring-zinc-200"
                   >
-                    {PRODUCT_CATEGORIES.map((category) => (
-                      <option key={category} value={category}>
-                        {category}
+                    <option value="">{t("categoryNoneOption")}</option>
+                    {categories.map((category) => (
+                      <option key={category.id} value={category.id}>
+                        {category.name}
                       </option>
                     ))}
                   </select>
+                  <p className="text-xs leading-5 text-zinc-500">{t("fieldCategoryHint")}</p>
                   {errors.category ? <p className="text-sm text-red-600">{errors.category}</p> : null}
                 </div>
 
@@ -271,6 +280,28 @@ export function ProductForm({ open, product, onClose, onSuccess }: ProductFormPr
                       }`}
                     />
                   </button>
+                </div>
+
+                <div className="space-y-2 md:col-span-2">
+                  <label htmlFor="collectionId" className="text-sm font-medium text-zinc-900">
+                    {t("fieldCollection")}
+                  </label>
+                  <select
+                    id="collectionId"
+                    value={values.collectionId ?? ""}
+                    onChange={(event) => updateField("collectionId", event.target.value || null)}
+                    className="w-full rounded-2xl border border-zinc-300 bg-white px-4 py-3 text-sm text-zinc-950 outline-none transition focus:border-zinc-500 focus:ring-2 focus:ring-zinc-200"
+                  >
+                    <option value="">{t("collectionNoneOption")}</option>
+                    {collections.map((collection) => (
+                      <option key={collection.id} value={collection.id}>
+                        {collection.name}
+                      </option>
+                    ))}
+                  </select>
+                  <p className="text-xs leading-5 text-zinc-500">
+                    {collections.length ? t("fieldCollectionHint") : t("collectionsEmpty")}
+                  </p>
                 </div>
               </div>
 

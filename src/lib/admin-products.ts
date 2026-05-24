@@ -1,4 +1,5 @@
-import type { Product } from "@/types";
+import { parseOptionalId, type TaxonomyRecord } from "@/lib/taxonomy";
+import type { Product, ProductTaxonomyItem } from "@/types";
 
 type PrismaProductRecord = {
   id: string;
@@ -7,6 +8,10 @@ type PrismaProductRecord = {
   price: number;
   currency: string;
   category: string;
+  categoryId?: string | null;
+  categoryRef?: TaxonomyRecord | null;
+  collectionId?: string | null;
+  collection?: TaxonomyRecord | null;
   stock: number;
   imageUrl: string | null;
   images: string;
@@ -15,18 +20,16 @@ type PrismaProductRecord = {
   updatedAt: Date;
 };
 
-export const PRODUCT_CATEGORIES = ["Cocina", "Decoración", "Oficina", "Velas", "Jarrones", "Textil"] as const;
-
 export const PRODUCT_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"] as const;
 export const MAX_PRODUCT_IMAGE_SIZE = 5 * 1024 * 1024;
-
-export type ProductCategory = (typeof PRODUCT_CATEGORIES)[number];
 
 export type ProductFormValues = {
   name: string;
   description: string;
   price: string;
   category: string;
+  categoryId?: string | null;
+  collectionId?: string | null;
   stock: string;
   imageUrl: string;
   images: string[];
@@ -37,18 +40,31 @@ export type ProductWriteInput = {
   name: string;
   description: string | null;
   price: number;
-  category: ProductCategory;
+  category: string;
+  categoryId: string | null;
+  collectionId: string | null;
   stock: number;
   imageUrl: string | null;
   images: string;
   featured: boolean;
 };
 
+export type ParsedProductPayload = {
+  data: ProductWriteInput;
+};
+
+export const ADMIN_PRODUCT_INCLUDE = {
+  categoryRef: true,
+  collection: true,
+};
+
 export const DEFAULT_PRODUCT_FORM_VALUES: ProductFormValues = {
   name: "",
   description: "",
   price: "",
-  category: PRODUCT_CATEGORIES[0],
+  category: "",
+  categoryId: null,
+  collectionId: null,
   stock: "0",
   imageUrl: "",
   images: [],
@@ -90,13 +106,24 @@ export function serializeProductImages(value: string | string[] | null | undefin
 }
 
 export function formatAdminProduct(product: PrismaProductRecord): Product {
+  const collection: ProductTaxonomyItem | null = product.collection
+    ? {
+        id: product.collection.id,
+        name: product.collection.name,
+        slug: product.collection.slug,
+      }
+    : null;
+
   return {
     id: product.id,
     name: product.name,
     description: product.description,
     price: product.price,
     currency: product.currency,
-    category: product.category,
+    category: product.categoryRef?.name ?? product.category,
+    categoryId: product.categoryId ?? null,
+    collectionId: product.collectionId ?? null,
+    collection,
     stock: product.stock,
     imageUrl: product.imageUrl,
     images: parseProductImages(product.images),
@@ -139,10 +166,12 @@ function parseBoolean(value: unknown) {
   return false;
 }
 
-export function parseProductPayload(payload: Record<string, unknown>): { data?: ProductWriteInput; error?: string } {
+export function parseProductPayload(payload: Record<string, unknown>): { data?: ParsedProductPayload; error?: string } {
   const name = typeof payload.name === "string" ? payload.name.trim() : "";
   const description = typeof payload.description === "string" ? payload.description.trim() : "";
   const category = typeof payload.category === "string" ? payload.category.trim() : "";
+  const categoryId = parseOptionalId(payload.categoryId);
+  const collectionId = parseOptionalId(payload.collectionId);
   const price = parseNumber(payload.price, Number.NaN);
   const stock = Math.max(0, Math.trunc(parseNumber(payload.stock, 0)));
   const imageUrlValue = typeof payload.imageUrl === "string" ? payload.imageUrl.trim() : "";
@@ -157,22 +186,22 @@ export function parseProductPayload(payload: Record<string, unknown>): { data?: 
     return { error: "El precio debe ser un número válido mayor o igual a 0." };
   }
 
-  if (!PRODUCT_CATEGORIES.includes(category as ProductCategory)) {
-    return { error: "La categoría seleccionada no es válida." };
-  }
-
   const imageUrl = imageUrlValue || images[0] || null;
 
   return {
     data: {
-      name,
-      description: description || null,
-      price,
-      category: category as ProductCategory,
-      stock,
-      imageUrl,
-      images: serializeProductImages(images),
-      featured,
+      data: {
+        name,
+        description: description || null,
+        price,
+        category,
+        categoryId,
+        collectionId,
+        stock,
+        imageUrl,
+        images: serializeProductImages(images),
+        featured,
+      },
     },
   };
 }

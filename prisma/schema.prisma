@@ -11,19 +11,46 @@ datasource db {
 }
 
 model Product {
-  id          String      @id @default(cuid())
-  name        String
+  id           String      @id @default(cuid())
+  name         String
+  description  String?
+  price        Float
+  currency     String      @default("EUR")
+  category     String      @default("")
+  categoryId   String?
+  categoryRef  Category?   @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  collectionId String?
+  collection   Collection? @relation(fields: [collectionId], references: [id], onDelete: SetNull)
+  stock        Int         @default(0)
+  imageUrl     String?
+  images       String      @default("[]") // SQLite does not support String[]; store a JSON array string manually.
+  featured     Boolean     @default(false)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  orderItems   OrderItem[]
+
+  @@index([categoryId])
+  @@index([collectionId])
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  slug        String    @unique
   description String?
-  price       Float
-  currency    String      @default("EUR")
-  category    String
-  stock       Int         @default(0)
-  imageUrl    String?
-  images      String      @default("[]") // SQLite does not support String[]; store a JSON array string manually.
-  featured    Boolean     @default(false)
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  orderItems  OrderItem[]
+  products    Product[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Collection {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  slug        String    @unique
+  description String?
+  products    Product[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 model Order {
@@ -35,8 +62,8 @@ model Order {
   shippingPostal  String
   shippingCountry String      @default("ES")
   status          String      @default("pending") // pending, paid, shipped, delivered, cancelled
-  paymentMethod   String?     // stripe, paypal
-  paymentId       String?     // external payment ID
+  paymentMethod   String? // stripe, paypal
+  paymentId       String? // external payment ID
   total           Float
   currency        String      @default("EUR")
   createdAt       DateTime    @default(now())

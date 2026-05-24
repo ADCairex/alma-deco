@@ -18,6 +18,9 @@ type ProductCardProps = {
 };
 
 export function ProductCard({ id, name, price, imageUrl, category, currency = "EUR" }: ProductCardProps) {
+  const t = useTranslations("shop.product");
+  const categoryLabel = category.trim() || t("categoryFallback");
+
   return (
     <article className="group">
       <div className="relative overflow-hidden rounded-[1.6rem] bg-paper">
@@ -45,7 +48,7 @@ export function ProductCard({ id, name, price, imageUrl, category, currency = "E
       </div>
 
       <div className="pt-5 text-center">
-        <p className="editorial-label text-ink/45">{category}</p>
+        <p className="editorial-label text-ink/45">{categoryLabel}</p>
         <h3 className="mt-3">
           <Link href={`/products/${id}`} className="text-[0.82rem] font-medium uppercase tracking-[0.24em] text-ink hover:text-ink/72">
             {name}

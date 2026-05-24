@@ -5,12 +5,21 @@ export interface Product {
   price: number;
   currency: string;
   category: string;
+  categoryId?: string | null;
+  collectionId?: string | null;
+  collection?: ProductTaxonomyItem | null;
   stock: number;
   imageUrl?: string | null;
   images: string[];
   featured: boolean;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface ProductTaxonomyItem {
+  id: string;
+  name: string;
+  slug: string;
 }
 
 export interface CartItem {

@@ -36,6 +36,9 @@ type PrismaOrderRecord = {
       id: string;
       name: string;
       category: string;
+      categoryRef?: {
+        name: string;
+      } | null;
     };
   }>;
 };
@@ -84,7 +87,7 @@ export function formatAdminOrder(order: PrismaOrderRecord): AdminOrder {
       product: {
         id: item.product.id,
         name: item.product.name,
-        category: item.product.category,
+        category: item.product.categoryRef?.name ?? item.product.category,
       },
     })),
   };

@@ -6,7 +6,7 @@ import { Hero } from "@/components/shop/Hero";
 import { ProductCard } from "@/components/shop/ProductCard";
 import { prisma } from "@/lib/prisma";
 import { getOrganizationStructuredData, getWebsiteStructuredData } from "@/lib/structured-data";
-import { formatPublicProduct } from "@/lib/shop-products";
+import { formatPublicProduct, PUBLIC_PRODUCT_INCLUDE } from "@/lib/shop-products";
 import type { Product } from "@/types";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://almadeco.com";
@@ -41,6 +41,7 @@ export default async function HomePage() {
       },
     },
     orderBy: [{ createdAt: "desc" }],
+    include: PUBLIC_PRODUCT_INCLUDE,
     take: 6,
   });
 
@@ -53,6 +54,7 @@ export default async function HomePage() {
             },
           },
           orderBy: [{ createdAt: "desc" }],
+          include: PUBLIC_PRODUCT_INCLUDE,
           take: 6,
         })
       : [];

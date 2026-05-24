@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 
 import { useTranslations } from "next-intl";
 
+import type { TaxonomyDto } from "@/lib/taxonomy";
 import type { Product } from "@/types";
 
 import { ProductForm } from "./ProductForm";
@@ -11,9 +12,11 @@ import { ProductTable } from "./ProductTable";
 
 type AdminProductsManagerProps = {
   initialProducts: Product[];
+  initialCategories: TaxonomyDto[];
+  initialCollections: TaxonomyDto[];
 };
 
-export function AdminProductsManager({ initialProducts }: AdminProductsManagerProps) {
+export function AdminProductsManager({ initialProducts, initialCategories, initialCollections }: AdminProductsManagerProps) {
   const [products, setProducts] = useState(initialProducts);
   const [searchQuery, setSearchQuery] = useState("");
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -183,6 +186,8 @@ export function AdminProductsManager({ initialProducts }: AdminProductsManagerPr
       <ProductForm
         open={isFormOpen}
         product={selectedProduct}
+        categories={initialCategories}
+        collections={initialCollections}
         onClose={() => setIsFormOpen(false)}
         onSuccess={async () => {
           setIsFormOpen(false);

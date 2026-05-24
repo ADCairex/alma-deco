@@ -19,6 +19,7 @@ async function main() {
       passwordHash,
     },
   });
+
 }
 
 main()

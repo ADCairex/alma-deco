@@ -7,7 +7,7 @@ import { ProductCard } from "@/components/shop/ProductCard";
 import { ProductPurchasePanel } from "@/components/shop/ProductPurchasePanel";
 import { prisma } from "@/lib/prisma";
 import { getProductStructuredData } from "@/lib/structured-data";
-import { formatProductPrice, formatPublicProduct, getProductGalleryImages, getProductSeoDescription, getStockStatus } from "@/lib/shop-products";
+import { formatProductPrice, formatPublicProduct, getProductGalleryImages, getProductSeoDescription, getStockStatus, PUBLIC_PRODUCT_INCLUDE } from "@/lib/shop-products";
 import type { Product } from "@/types";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://almadeco.com";
@@ -21,6 +21,7 @@ type ProductDetailPageProps = {
 async function getNormalizedProduct(id: string) {
   const product = await prisma.product.findUnique({
     where: { id },
+    include: PUBLIC_PRODUCT_INCLUDE,
   });
 
   return product ? formatPublicProduct(product) : null;
@@ -71,16 +72,25 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
     notFound();
   }
 
+  const relatedWhere = product.categoryId
+    ? {
+        categoryId: product.categoryId,
+      }
+    : {
+        category: product.category,
+      };
+
   const relatedProducts = await prisma.product.findMany({
     where: {
       id: {
         not: product.id,
       },
-      category: product.category,
+      ...relatedWhere,
       stock: {
         gt: 0,
       },
     },
+    include: PUBLIC_PRODUCT_INCLUDE,
     orderBy: [{ featured: "desc" }, { createdAt: "desc" }],
     take: 4,
   });
@@ -88,6 +98,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
   const galleryImages = getProductGalleryImages(product);
   const stockStatus = getStockStatus(product.stock);
   const relatedProductsNormalized: Product[] = relatedProducts.map(formatPublicProduct);
+  const categoryLabel = product.category.trim() || t("categoryFallback");
   const productStructuredData = getProductStructuredData({
     product,
     siteUrl,
@@ -108,7 +119,12 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
           <div className="flex flex-col justify-center">
             <div className="space-y-6 lg:space-y-8">
               <div className="space-y-4 border-b border-line pb-6">
-                <p className="editorial-label text-ink/44">{product.category}</p>
+                <p className="editorial-label text-ink/44">{categoryLabel}</p>
+                {product.collection ? (
+                  <span className="inline-flex rounded-full border border-line bg-white px-3 py-1 text-[0.68rem] uppercase tracking-[0.18em] text-ink/55">
+                    {product.collection.name}
+                  </span>
+                ) : null}
                 <h1 className="font-display text-[2.4rem] leading-[1.04] text-ink sm:text-[3rem] xl:text-[3.55rem]">{product.name}</h1>
                 <p className="text-[1.4rem] font-medium tracking-[0.04em] text-ink sm:text-[1.65rem]">
                   {formatProductPrice(product.price, product.currency)}

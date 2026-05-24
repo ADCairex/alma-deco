@@ -21,6 +21,11 @@ export async function fetchAdminOrders(status?: string | null) {
               id: true,
               name: true,
               category: true,
+              categoryRef: {
+                select: {
+                  name: true,
+                },
+              },
             },
           },
         },
@@ -45,6 +50,11 @@ export async function fetchAdminOrderById(id: string) {
               id: true,
               name: true,
               category: true,
+              categoryRef: {
+                select: {
+                  name: true,
+                },
+              },
             },
           },
         },
@@ -117,6 +127,11 @@ export async function fetchAdminDashboardMetrics() {
               id: true,
               name: true,
               category: true,
+              categoryRef: {
+                select: {
+                  name: true,
+                },
+              },
             },
           },
         },
@@ -160,11 +175,12 @@ export async function fetchAdminDashboardMetrics() {
     topProductsMap.set(item.productId, {
       productId: item.product.id,
       name: item.product.name,
-      category: item.product.category,
+      category: item.product.categoryRef?.name ?? item.product.category,
       unitsSold: (currentProduct?.unitsSold ?? 0) + item.quantity,
     });
 
-    categorySalesMap.set(item.product.category, (categorySalesMap.get(item.product.category) ?? 0) + item.quantity);
+    const categoryLabel = item.product.categoryRef?.name ?? item.product.category;
+    categorySalesMap.set(categoryLabel, (categorySalesMap.get(categoryLabel) ?? 0) + item.quantity);
   }
 
   const topProducts = [...topProductsMap.values()].sort((a, b) => b.unitsSold - a.unitsSold).slice(0, 5);

@@ -42,6 +42,21 @@ function FeaturedBadge({ featured }: { featured: boolean }) {
   );
 }
 
+function TaxonomySummary({ product }: { product: Product }) {
+  return (
+    <div className="space-y-2">
+      <p className="font-medium text-zinc-800">{product.category || "Sin categoría"}</p>
+      {product.collection ? (
+        <span className="inline-flex rounded-full bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-600">
+          {product.collection.name}
+        </span>
+      ) : (
+        <p className="text-xs text-zinc-400">Sin colección</p>
+      )}
+    </div>
+  );
+}
+
 export function ProductTable({ products, deletingProductId, onEdit, onDelete }: ProductTableProps) {
   return (
     <>
@@ -71,7 +86,7 @@ export function ProductTable({ products, deletingProductId, onEdit, onDelete }: 
                       <p className="max-w-xs text-sm leading-6 text-zinc-500 line-clamp-2">{product.description || "Sin descripción"}</p>
                     </div>
                   </td>
-                  <td className="px-6 py-4">{product.category}</td>
+                  <td className="px-6 py-4"><TaxonomySummary product={product} /></td>
                   <td className="px-6 py-4 font-semibold text-zinc-950">{formatAdminPrice(product.price)}</td>
                   <td className="px-6 py-4">{product.stock}</td>
                   <td className="px-6 py-4">
@@ -114,7 +129,7 @@ export function ProductTable({ products, deletingProductId, onEdit, onDelete }: 
                     <h3 className="text-base font-semibold text-zinc-950">{product.name}</h3>
                     <FeaturedBadge featured={product.featured} />
                   </div>
-                  <p className="text-sm text-zinc-500">{product.category}</p>
+                  <div className="text-sm text-zinc-500"><TaxonomySummary product={product} /></div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3 rounded-2xl bg-zinc-50 p-3 text-sm text-zinc-600">
